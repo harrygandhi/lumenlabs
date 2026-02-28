@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumen Labs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --transition-speed: 0.45s; }
+
+[data-theme="dark"] {
+  --bg: #06070a; --fg: #e5e1d8; --accent: #7df9a4; --muted: #6e6b63;
+  --surface: #0e0f13; --overlay-bg: rgba(6,7,10,0.85);
+  --input-bg: #111215; --input-border: rgba(255,255,255,0.08);
+  --input-focus: rgba(125,249,164,0.3); --card-bg: #0d0e12;
+  --card-border: rgba(255,255,255,0.06);
+  --fade-color: #06070a;
+}
+[data-theme="light"] {
+  --bg: #f4f2ed; --fg: #1a1a1e; --accent: #0d7a3e; --muted: #6b6860;
+  --surface: #eae7e0; --overlay-bg: rgba(244,242,237,0.92);
+  --input-bg: #ffffff; --input-border: rgba(0,0,0,0.1);
+  --input-focus: rgba(13,122,62,0.3); --card-bg: #ffffff;
+  --card-border: rgba(0,0,0,0.08);
+  --fade-color: #f4f2ed;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: 'Manrope', sans-serif;
+  min-height: 100vh; overflow-x: hidden;
+  transition: background var(--transition-speed), color var(--transition-speed);
+}
+
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+}
+
+.theme-toggle {
+  position: fixed; top: 28px; left: 80px; z-index: 200;
+  width: 48px; height: 26px; border-radius: 13px;
+  border: 1px solid var(--input-border); background: var(--input-bg);
+  cursor: pointer; display: flex; align-items: center; padding: 0 3px;
+  transition: background var(--transition-speed), border-color var(--transition-speed);
+  opacity: 0; animation: slideIn 0.7s ease-out 1.4s forwards;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+
+.toggle-knob {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); display: flex; align-items: center;
+  justify-content: center; font-size: 11px; line-height: 1;
+  transition: transform 0.3s ease, background 0.3s;
+}
+[data-theme="dark"] .toggle-knob { transform: translateX(0); }
+[data-theme="light"] .toggle-knob { transform: translateX(22px); }
+
+.hero {
+  display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh;
+}
+
+.hero-left {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 80px; position: relative;
+}
+.hero-left::before {
+  content: ''; position: absolute; top: 30%; left: -10%;
+  width: 500px; height: 500px; pointer-events: none;
+  background: radial-gradient(circle, rgba(125,249,164,0.04) 0%, transparent 70%);
+}
+[data-theme="light"] .hero-left::before {
+  background: radial-gradient(circle, rgba(13,122,62,0.04) 0%, transparent 70%);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif; font-size: 1.3rem;
+  letter-spacing: -0.01em; display: flex; align-items: center;
+  gap: 11px; color: var(--fg); margin-bottom: 52px;
+  opacity: 0; animation: slideIn 0.7s ease-out 0.2s forwards;
+  transition: color var(--transition-speed);
+}
+.logo-mark {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+  transition: background var(--transition-speed);
+}
+[data-theme="dark"] .logo-mark {
+  box-shadow: 0 0 14px var(--accent), 0 0 40px rgba(125,249,164,0.25);
+  animation: breathe 3s ease-in-out infinite;
+}
+[data-theme="light"] .logo-mark { box-shadow: 0 0 8px rgba(13,122,62,0.3); }
+
+@keyframes breathe {
+  0%,100% { box-shadow: 0 0 14px #7df9a4, 0 0 40px rgba(125,249,164,0.25); transform: scale(1); }
+  50% { box-shadow: 0 0 22px #7df9a4, 0 0 60px rgba(125,249,164,0.4); transform: scale(1.15); }
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.6rem, 4.5vw, 3.8rem);
+  font-weight: 400; line-height: 1.1; letter-spacing: -0.025em;
+  margin-bottom: 32px; opacity: 0;
+  animation: slideIn 0.7s ease-out 0.4s forwards;
+  transition: color var(--transition-speed);
+}
+h1 em {
+  font-style: italic; color: var(--accent); position: relative;
+  transition: color var(--transition-speed);
+}
+h1 em::after {
+  content: ''; position: absolute; bottom: 2px; left: 0; right: 0;
+  height: 1px; background: var(--accent); opacity: 0.3;
+}
+
+.hero-body {
+  font-size: 1.02rem; line-height: 1.8; color: var(--muted);
+  max-width: 480px; font-weight: 300; margin-bottom: 44px;
+  opacity: 0; animation: slideIn 0.7s ease-out 0.6s forwards;
+  transition: color var(--transition-speed);
+}
+
+.hero-buttons {
+  display: flex; gap: 14px; opacity: 0;
+  animation: slideIn 0.7s ease-out 0.8s forwards;
+}
+.btn-main {
+  background: var(--accent); color: var(--bg); border: none;
+  padding: 14px 32px; font-size: 0.88rem; font-weight: 700;
+  border-radius: 6px; cursor: pointer; font-family: 'Manrope', sans-serif;
+  letter-spacing: 0.02em; text-decoration: none;
+  display: inline-flex; align-items: center;
+  transition: transform 0.2s, box-shadow 0.3s, background var(--transition-speed), color var(--transition-speed);
+}
+.btn-main:hover { transform: translateY(-2px); }
+[data-theme="dark"] .btn-main:hover { box-shadow: 0 8px 30px rgba(125,249,164,0.3); }
+[data-theme="light"] .btn-main:hover { box-shadow: 0 8px 30px rgba(13,122,62,0.2); }
+
+.btn-ghost {
+  background: transparent; color: var(--fg);
+  border: 1px solid var(--input-border);
+  padding: 14px 32px; font-size: 0.88rem; font-weight: 500;
+  border-radius: 6px; cursor: pointer; font-family: 'Manrope', sans-serif;
+  transition: border-color 0.3s, background 0.3s, color var(--transition-speed);
+}
+[data-theme="dark"] .btn-ghost:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.03); }
+[data-theme="light"] .btn-ghost:hover { border-color: rgba(0,0,0,0.2); background: rgba(0,0,0,0.03); }
+
+.footer-line {
+  margin-top: 56px; padding-top: 32px;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.88rem; line-height: 1.65; color: var(--muted);
+  max-width: 480px; font-weight: 300; opacity: 0;
+  animation: slideIn 0.7s ease-out 1s forwards;
+  transition: color var(--transition-speed), border-color var(--transition-speed);
+}
+.footer-line a {
+  color: var(--accent); text-decoration: none; cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, color var(--transition-speed);
+}
+.footer-line a:hover { border-bottom-color: var(--accent); }
+
+.hero-right {
+  position: relative; overflow: hidden; background: var(--surface);
+  transition: background var(--transition-speed); min-height: 100vh;
+}
+.canvas-fade {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+}
+canvas#automata {
+  display: block; width: 100%; height: 100%; min-height: 100vh;
+  opacity: 0; animation: fadeCanvas 2s ease-out 0.6s forwards;
+}
+@keyframes fadeCanvas { to { opacity: 0.9; } }
+
+.seed-label {
+  position: absolute; bottom: 28px; right: 32px; z-index: 10;
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); opacity: 0;
+  font-family: 'Manrope', sans-serif;
+  animation: slideIn 0.7s ease-out 1.5s forwards;
+  transition: color var(--transition-speed);
+}
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--overlay-bg); backdrop-filter: blur(20px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 12px; padding: 48px 44px; width: 100%; max-width: 460px;
+  position: relative; transform: translateY(16px) scale(0.97);
+  transition: transform 0.35s ease, background var(--transition-speed), border-color var(--transition-speed);
+}
+.modal-overlay.active .modal-card { transform: translateY(0) scale(1); }
+.modal-title {
+  font-family: 'Playfair Display', serif; font-size: 1.5rem;
+  margin-bottom: 8px; color: var(--fg); transition: color var(--transition-speed);
+}
+.modal-subtitle {
+  font-size: 0.85rem; color: var(--muted); margin-bottom: 32px;
+  font-weight: 300; line-height: 1.5; transition: color var(--transition-speed);
+}
+.modal-close {
+  position: absolute; top: 20px; right: 20px; width: 32px; height: 32px;
+  border: none; background: transparent; color: var(--muted);
+  font-size: 1.2rem; cursor: pointer; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+.modal-close:hover { color: var(--fg); background: var(--input-bg); }
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block; font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 8px; transition: color var(--transition-speed);
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 12px 14px; font-size: 0.9rem;
+  font-family: 'Manrope', sans-serif; background: var(--input-bg);
+  border: 1px solid var(--input-border); border-radius: 6px;
+  color: var(--fg); outline: none;
+  transition: border-color 0.3s, background var(--transition-speed), color var(--transition-speed);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--input-focus);
+}
+.form-select {
+  appearance: none; cursor: pointer; padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236e6b63' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.form-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+.form-submit {
+  width: 100%; padding: 14px; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 700;
+  font-family: 'Manrope', sans-serif; cursor: pointer; margin-top: 8px;
+  transition: transform 0.2s, box-shadow 0.3s, background var(--transition-speed), color var(--transition-speed);
+}
+.form-submit:hover { transform: translateY(-1px); }
+[data-theme="dark"] .form-submit:hover { box-shadow: 0 6px 24px rgba(125,249,164,0.3); }
+[data-theme="light"] .form-submit:hover { box-shadow: 0 6px 24px rgba(13,122,62,0.2); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; grid-template-rows: auto 55vh; }
+  .hero-left { padding: 60px 32px 40px; }
+  .hero-right { border-top: 1px solid var(--card-border); min-height: 55vh; }
+  canvas#automata { min-height: 55vh; }
+  .theme-toggle { top: 20px; left: 32px; }
+  .modal-card { margin: 20px; padding: 36px 28px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+  <span class="toggle-knob" id="toggleKnob"></span>
+</button>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" aria-label="Close">&#x2715;</button>
+    <div class="modal-title">Request Access</div>
+    <div class="modal-subtitle">Tell us a bit about yourself and what you are looking to explore.</div>
+    <div>
+      <div class="form-group">
+        <label class="form-label" for="formName">Name</label>
+        <input class="form-input" type="text" id="formName" placeholder="Your full name" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="formEmail">Email</label>
+        <input class="form-input" type="email" id="formEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="formPurpose">Purpose</label>
+        <select class="form-select" id="formPurpose">
+          <option value="" disabled selected>Select a purpose</option>
+          <option value="research">Academic Research</option>
+          <option value="commercial">Commercial Application</option>
+          <option value="collaboration">Research Collaboration</option>
+          <option value="journalism">Journalism / Media</option>
+          <option value="personal">Personal Interest</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="formDesc">What would you like to do with our models?</label>
+        <textarea class="form-textarea" id="formDesc" placeholder="A brief description of your intended use..."></textarea>
+      </div>
+      <button class="form-submit" id="formSubmit">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="logo">
+      <span class="logo-mark"></span>
+      Lumen Labs
+    </div>
+    <h1>Intelligence born<br>from <em>parsimony</em></h1>
+    <p class="hero-body">
+      Lumen Labs is building the first systems grounded in Cognitive Parsimony Theory &mdash; a mathematical framework in which consciousness emerges when a system learns to predict its world with extraordinary economy. Here, curiosity, attention, and awareness are not features we engineer. They are properties that surface on their own. We are not scaling our way to general intelligence. We are deriving it from first principles.
+    </p>
+    <div class="hero-buttons">
+      <a class="btn-main" href="Cognitive_Parsimony_Theory_CPT_White_Paper_V0_8.pdf" target="_blank" rel="noopener">Read the Paper</a>
+      <button class="btn-ghost" id="requestAccessBtn">Request Access</button>
+    </div>
+    <div class="footer-line">
+      If you are interested in learning more about our work, or think we are woefully wrong, we encourage you to <a id="emailLink">reach out to us</a>.
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <canvas id="automata"></canvas>
+    <div class="canvas-fade" id="canvasFade"></div>
+    <div class="seed-label" id="seedLabel"></div>
+  </div>
+</section>
+
+<script>
+(function() {
+  // === EMAIL LINK (built dynamically to avoid Cloudflare email obfuscation) ===
+  var user = 'hg';
+  var domain = 'lumenresearch.ai';
+  var emailLink = document.getElementById('emailLink');
+  emailLink.href = 'mai' + 'lto:' + user + '@' + domain;
+
+  // === THEME TOGGLE ===
+  var html = document.documentElement;
+  var toggleBtn = document.getElementById('themeToggle');
+  var toggleKnob = document.getElementById('toggleKnob');
+  var canvasFade = document.getElementById('canvasFade');
+
+  function applyTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    toggleKnob.textContent = theme === 'dark' ? '\u263D' : '\u2600';
+    updateCanvasFade(theme);
+  }
+
+  function updateCanvasFade(theme) {
+    var c = theme === 'dark' ? '#06070a' : '#f4f2ed';
+    canvasFade.style.background =
+      'linear-gradient(to right, ' + c + ' 0%, transparent 8%), ' +
+      'linear-gradient(to bottom, ' + c + ' 0%, transparent 12%), ' +
+      'linear-gradient(to top, ' + c + ' 0%, transparent 8%)';
+  }
+
+  toggleBtn.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  applyTheme('dark');
+
+  // === MODAL ===
+  var overlay = document.getElementById('modalOverlay');
+  var openBtn = document.getElementById('requestAccessBtn');
+  var closeBtn = document.getElementById('modalClose');
+  var submitBtn = document.getElementById('formSubmit');
+
+  openBtn.addEventListener('click', function() {
+    overlay.classList.add('active');
+  });
+
+  closeBtn.addEventListener('click', function() {
+    overlay.classList.remove('active');
+  });
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') overlay.classList.remove('active');
+  });
+
+  submitBtn.addEventListener('click', function() {
+    var name = document.getElementById('formName').value.trim();
+    var email = document.getElementById('formEmail').value.trim();
+    var purpose = document.getElementById('formPurpose').value;
+    var desc = document.getElementById('formDesc').value.trim();
+
+    if (!name || !email || !purpose) {
+      submitBtn.textContent = 'Please fill in all required fields';
+      submitBtn.style.opacity = '0.7';
+      setTimeout(function() {
+        submitBtn.textContent = 'Submit Request';
+        submitBtn.style.opacity = '1';
+      }, 2000);
+      return;
+    }
+
+    // Map dropdown values to Google Form option text
+    var purposeMap = {
+      'research': 'Academic Research',
+      'commercial': 'Commercial Application',
+      'collaboration': 'Research Collaboration',
+      'journalism': 'Journalism / Media',
+      'personal': 'Personal Interest',
+      'other': 'Other'
+    };
+
+    // Submit to Google Forms
+    var formId = '1FAIpQLSejig6Vtxx1EYHRM3lOCVpBx--KrKtE13nmXK0aXhRFQefdAg';
+    var url = 'https://docs.google.com/forms/d/e/' + formId + '/formResponse';
+    var params = new URLSearchParams();
+    params.append('entry.1961944309', name);
+    params.append('entry.1091280843', email);
+    params.append('entry.310278535', purposeMap[purpose] || purpose);
+    params.append('entry.1233414672', desc);
+
+    // Use fetch with no-cors (Google Forms doesn't return a readable response, but the data lands)
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    });
+
+    submitBtn.textContent = 'Thank you \u2014 we will be in touch.';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+
+    setTimeout(function() {
+      overlay.classList.remove('active');
+      setTimeout(function() {
+        submitBtn.textContent = 'Submit Request';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        document.getElementById('formName').value = '';
+        document.getElementById('formEmail').value = '';
+        document.getElementById('formPurpose').selectedIndex = 0;
+        document.getElementById('formDesc').value = '';
+      }, 400);
+    }, 2000);
+  });
+
+  // === CELLULAR AUTOMATA ===
+  var seed = Date.now() ^ (Math.random() * 0xffffffff >>> 0);
+  document.getElementById('seedLabel').textContent = 'seed ' + seed.toString(16).toUpperCase();
+
+  function mulberry32(a) {
+    return function() {
+      a = (a | 0) + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  var rng = mulberry32(seed);
+
+  var canvas = document.getElementById('automata');
+  var ctx = canvas.getContext('2d');
+  var CELL = 5, GAP = 1, STEP = CELL + GAP;
+  var cols, rows, grid, next, age;
+
+  // === PERTURBATION PULSE (mouse interaction) ===
+  var mouseX = -1, mouseY = -1;
+  var mouseActive = false;
+  var PERTURB_RADIUS = 10;    // cells
+  var PERTURB_CHANCE = 0.12;  // probability of flipping per cell per tick
+
+  canvas.addEventListener('mousemove', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    mouseX = Math.floor((e.clientX - rect.left) / STEP);
+    mouseY = Math.floor((e.clientY - rect.top) / STEP);
+    mouseActive = true;
+  });
+
+  canvas.addEventListener('mouseleave', function() {
+    mouseActive = false;
+    mouseX = -1;
+    mouseY = -1;
+  });
+
+  function getColors() {
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    if (isDark) return { ac: {r:125,g:249,b:164}, bg: {r:14,g:15,b:19} };
+    return { ac: {r:13,g:122,b:62}, bg: {r:234,g:231,b:224} };
+  }
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    cols = Math.floor(canvas.width / STEP);
+    rows = Math.floor(canvas.height / STEP);
+    if (cols > 0 && rows > 0) initGrid();
+  }
+
+  function initGrid() {
+    var total = cols * rows;
+    grid = new Uint8Array(total);
+    next = new Uint8Array(total);
+    age = new Float32Array(total);
+
+    var density = 0.12 + rng() * 0.14;
+    var cx = Math.floor(rng() * cols);
+    var cy = Math.floor(rng() * rows);
+    var cr = Math.floor(Math.min(cols, rows) * (0.15 + rng() * 0.2));
+
+    for (var i = 0; i < total; i++) {
+      var x = i % cols;
+      var y = Math.floor(i / cols);
+      var dx = x - cx, dy = y - cy;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      var localD = d < cr ? density * 2.2 : density * 0.6;
+      grid[i] = rng() < localD ? 1 : 0;
+    }
+
+    var patterns = [
+      [[0,0],[1,0],[2,0],[2,1],[1,2]],
+      [[0,1],[0,3],[1,0],[2,0],[3,0],[4,0],[4,1],[4,2],[3,3]],
+      [[1,0],[2,0],[0,1],[1,1],[1,2]],
+      [[1,0],[3,1],[0,2],[1,2],[4,2],[5,2],[6,2]]
+    ];
+    var count = 2 + Math.floor(rng() * 3);
+    for (var n = 0; n < count; n++) {
+      var p = patterns[Math.floor(rng() * patterns.length)];
+      var ox = Math.floor(rng() * (cols - 12)) + 4;
+      var oy = Math.floor(rng() * (rows - 12)) + 4;
+      for (var j = 0; j < p.length; j++) {
+        var idx = (oy + p[j][1]) * cols + (ox + p[j][0]);
+        if (idx >= 0 && idx < total) grid[idx] = 1;
+      }
+    }
+  }
+
+  function wrap(x, y) {
+    return ((y + rows) % rows) * cols + ((x + cols) % cols);
+  }
+
+  function step() {
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var n = 0;
+        for (var dy = -1; dy <= 1; dy++) {
+          for (var dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) continue;
+            n += grid[wrap(x + dx, y + dy)];
+          }
+        }
+        var i = y * cols + x;
+        if (grid[i]) {
+          next[i] = (n === 2 || n === 3) ? 1 : 0;
+        } else {
+          next[i] = (n === 3) ? 1 : 0;
+        }
+      }
+    }
+    var tmp = grid; grid = next; next = tmp;
+  }
+
+  function applyPerturbation() {
+    if (!mouseActive || mouseX < 0 || mouseY < 0) return;
+    var r2 = PERTURB_RADIUS * PERTURB_RADIUS;
+    var startX = Math.max(0, mouseX - PERTURB_RADIUS);
+    var endX = Math.min(cols - 1, mouseX + PERTURB_RADIUS);
+    var startY = Math.max(0, mouseY - PERTURB_RADIUS);
+    var endY = Math.min(rows - 1, mouseY + PERTURB_RADIUS);
+
+    for (var y = startY; y <= endY; y++) {
+      for (var x = startX; x <= endX; x++) {
+        var dx = mouseX - x;
+        var dy = mouseY - y;
+        var dist2 = dx * dx + dy * dy;
+        if (dist2 > r2) continue;
+
+        // Flip probability falls off with distance
+        var dist = Math.sqrt(dist2);
+        var chance = PERTURB_CHANCE * (1 - dist / PERTURB_RADIUS);
+        if (rng() < chance) {
+          var i = y * cols + x;
+          grid[i] = grid[i] ? 0 : 1;
+          // Newly born cells start bright so the disruption is visible
+          if (grid[i]) age[i] = 0.6 + rng() * 0.4;
+        }
+      }
+    }
+  }
+
+  function drawPerturbGlow() {
+    if (!mouseActive || mouseX < 0 || mouseY < 0) return;
+    var colors = getColors();
+    var ac = colors.ac;
+    var px = mouseX * STEP + CELL * 0.5;
+    var py = mouseY * STEP + CELL * 0.5;
+    var radius = PERTURB_RADIUS * STEP;
+
+    // Soft ripple ring rather than filled circle
+    ctx.strokeStyle = 'rgba(' + ac.r + ',' + ac.g + ',' + ac.b + ',0.08)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(px, py, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner subtle glow
+    var grad = ctx.createRadialGradient(px, py, 0, px, py, radius * 0.6);
+    grad.addColorStop(0, 'rgba(' + ac.r + ',' + ac.g + ',' + ac.b + ',0.04)');
+    grad.addColorStop(1, 'rgba(' + ac.r + ',' + ac.g + ',' + ac.b + ',0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(px, py, radius * 0.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  var gen = 0;
+  function injectLife() {
+    var ps = [
+      [[0,0],[1,0],[2,0],[2,1],[1,2]],
+      [[0,0],[1,0],[2,0]],
+      [[1,0],[2,0],[0,1],[1,1],[1,2]]
+    ];
+    var p = ps[Math.floor(rng() * ps.length)];
+    var ox = Math.floor(rng() * (cols - 8)) + 4;
+    var oy = Math.floor(rng() * (rows - 8)) + 4;
+    for (var j = 0; j < p.length; j++) {
+      grid[wrap(ox + p[j][0], oy + p[j][1])] = 1;
+    }
+  }
+
+  function draw() {
+    var colors = getColors();
+    var ac = colors.ac, bg = colors.bg;
+
+    ctx.fillStyle = 'rgba(' + bg.r + ',' + bg.g + ',' + bg.b + ',0.28)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var i = y * cols + x;
+        if (grid[i]) {
+          age[i] = Math.min(age[i] + 0.15, 1);
+        } else {
+          age[i] = age[i] * 0.92;
+        }
+        if (age[i] < 0.01) continue;
+
+        var a = age[i];
+        var px = x * STEP, py = y * STEP;
+        var r = (bg.r + (ac.r - bg.r) * a) | 0;
+        var g = (bg.g + (ac.g - bg.g) * a) | 0;
+        var b = (bg.b + (ac.b - bg.b) * a) | 0;
+
+        ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (0.25 + a * 0.75) + ')';
+        ctx.fillRect(px, py, CELL, CELL);
+
+        if (a > 0.7) {
+          ctx.fillStyle = 'rgba(' + ac.r + ',' + ac.g + ',' + ac.b + ',' + ((a - 0.7) * 0.12) + ')';
+          ctx.fillRect(px - 2, py - 2, CELL + 4, CELL + 4);
+        }
+      }
+    }
+  }
+
+  var lastStep = 0;
+  function loop(t) {
+    if (t - lastStep > 75) {
+      step();
+      applyPerturbation();
+      gen++;
+      if (gen % 35 === 0) injectLife();
+      lastStep = t;
+    }
+    draw();
+    drawPerturbGlow();
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  var initColors = getColors();
+  ctx.fillStyle = 'rgb(' + initColors.bg.r + ',' + initColors.bg.g + ',' + initColors.bg.b + ')';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
