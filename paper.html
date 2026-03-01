@@ -474,6 +474,100 @@ html { scroll-behavior: smooth; }
 [data-theme="light"] .def-popup {
   border-color: var(--accent);
 }
+
+/* Light mode figure overrides */
+[data-theme="light"] .figure-container {
+  background: #f0ede6;
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* Figure SVG text - darken for readability */
+[data-theme="light"] .figure-container > svg text[fill="#e5e1d8"] { fill: #1a1a1e; }
+[data-theme="light"] .figure-container > svg text[fill="#6e6b63"] { fill: #4a4840; }
+[data-theme="light"] .figure-container > svg text[fill="#F1B82F"] { fill: #8a6d08; }
+[data-theme="light"] .figure-container > svg text[fill="#cc6666"] { fill: #a03030; }
+[data-theme="light"] .figure-container > svg text[fill="#7cb87c"] { fill: #2a7a2a; }
+[data-theme="light"] .figure-container > svg text[fill="#c9a62c"] { fill: #7a6510; }
+[data-theme="light"] .figure-container > svg text[fill="#8a8880"] { fill: #4a4840; }
+[data-theme="light"] .figure-container > svg text[fill="#8a8040"] { fill: #5a5020; }
+[data-theme="light"] .figure-container > svg text[fill="#8a6060"] { fill: #6a3030; }
+[data-theme="light"] .figure-container > svg text[fill="#6a6860"] { fill: #3a3830; }
+[data-theme="light"] .figure-container > svg text[fill="#a89040"] { fill: #6a5a18; }
+
+/* SVG lines and strokes */
+[data-theme="light"] .figure-container > svg line[stroke="#e5e1d8"] { stroke: #1a1a1e; }
+[data-theme="light"] .figure-container > svg line[stroke="#6e6b63"] { stroke: #4a4840; }
+[data-theme="light"] .figure-container > svg line[stroke="#F1B82F"] { stroke: #8a6d08; }
+[data-theme="light"] .figure-container > svg line[stroke="#cc6666"] { stroke: #a03030; }
+[data-theme="light"] .figure-container > svg line[stroke="#7cb87c"] { stroke: #2a7a2a; }
+[data-theme="light"] .figure-container > svg path[stroke="#F1B82F"] { stroke: #8a6d08; }
+[data-theme="light"] .figure-container > svg path[stroke="#cc6666"] { stroke: #a03030; }
+
+/* SVG rects - lighten backgrounds */
+[data-theme="light"] .figure-container > svg rect[fill="rgba(255,255,255,0.05)"] { fill: rgba(0,0,0,0.04); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.08)"] { fill: rgba(184,134,11,0.08); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.12)"] { fill: rgba(184,134,11,0.1); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.15)"] { fill: rgba(184,134,11,0.12); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(100,200,130,0.08)"] { fill: rgba(30,120,30,0.08); }
+[data-theme="light"] .figure-container > svg rect[stroke="#6e6b63"] { stroke: #4a4840; }
+[data-theme="light"] .figure-container > svg rect[stroke="#F1B82F"] { stroke: #8a6d08; }
+[data-theme="light"] .figure-container > svg rect[stroke="rgba(241,184,47,0.3)"] { stroke: rgba(138,109,8,0.3); }
+[data-theme="light"] .figure-container > svg rect[stroke="rgba(100,200,130,0.3)"] { stroke: rgba(30,120,30,0.3); }
+
+/* SVG arrow markers - use JS to swap, but also set via CSS where possible */
+[data-theme="light"] .figure-container > svg marker path[fill="#e5e1d8"] { fill: #1a1a1e; }
+[data-theme="light"] .figure-container > svg marker path[fill="#F1B82F"] { fill: #8a6d08; }
+[data-theme="light"] .figure-container > svg marker path[fill="#6e6b63"] { fill: #4a4840; }
+[data-theme="light"] .figure-container > svg marker path[fill="#cc6666"] { fill: #a03030; }
+[data-theme="light"] .figure-container > svg marker path[fill="#7cb87c"] { fill: #2a7a2a; }
+
+/* Figure 2 quadrant backgrounds for light mode */
+[data-theme="light"] .figure-container > svg rect[fill="rgba(255,100,100,0.06)"] { fill: rgba(180,50,50,0.08); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.05)"] { fill: rgba(184,134,11,0.07); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(255,255,255,0.025)"] { fill: rgba(0,0,0,0.03); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.09)"] { fill: rgba(184,134,11,0.1); }
+[data-theme="light"] .figure-container > svg line[stroke="rgba(255,255,255,0.08)"] { stroke: rgba(0,0,0,0.1); }
+
+/* Figure 3 trajectory quadrant backgrounds */
+[data-theme="light"] .figure-container > svg rect[fill="rgba(255,100,100,0.06)"] { fill: rgba(180,50,50,0.06); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.06)"] { fill: rgba(184,134,11,0.06); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(255,255,255,0.03)"] { fill: rgba(0,0,0,0.03); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.08)"] { fill: rgba(184,134,11,0.08); }
+
+/* Figure 3 trajectory circle */
+[data-theme="light"] .figure-container > svg circle[fill="#F1B82F"] { fill: #8a6d08; }
+
+/* Quadrant card colors in light mode */
+[data-theme="light"] .q-optimal { background: rgba(184,134,11,0.08); border-color: rgba(184,134,11,0.2); color: #6a5010; }
+[data-theme="light"] .q-learning { background: rgba(184,134,11,0.05); border-color: rgba(184,134,11,0.15); color: #6a5010; }
+[data-theme="light"] .q-dizzy { background: rgba(180,50,50,0.05); border-color: rgba(180,50,50,0.15); color: #8a2020; }
+[data-theme="light"] .q-ambiguous { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); color: #4a4840; }
+
+/* Disambig cards */
+[data-theme="light"] .disambig-card { background: #f0ede6; border-color: rgba(0,0,0,0.08); }
+
+/* Cycle cards */
+[data-theme="light"] .c-attend { border-color: rgba(184,134,11,0.2); background: rgba(184,134,11,0.05); }
+[data-theme="light"] .c-predict { border-color: rgba(60,90,180,0.2); background: rgba(60,90,180,0.05); }
+[data-theme="light"] .c-act { border-color: rgba(40,140,70,0.2); background: rgba(40,140,70,0.05); }
+[data-theme="light"] .c-learn { border-color: rgba(180,60,60,0.2); background: rgba(180,60,60,0.05); }
+
+/* Ram levels */
+[data-theme="light"] .ram-level { border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .ram-level:nth-child(1) { background: rgba(184,134,11,0.04); }
+[data-theme="light"] .ram-level:nth-child(2) { background: rgba(184,134,11,0.07); }
+[data-theme="light"] .ram-level:nth-child(3) { background: rgba(184,134,11,0.10); }
+[data-theme="light"] .ram-level:nth-child(4) { background: rgba(184,134,11,0.13); }
+
+/* Failure mode */
+[data-theme="light"] .failure-mode { background: rgba(180,50,50,0.04); border-left-color: rgba(180,50,50,0.25); }
+
+/* Callout */
+[data-theme="light"] .callout { background: rgba(184,134,11,0.06); border-left-color: var(--accent); }
+
+/* Equation blocks */
+[data-theme="light"] .equation { background: #ebe8e0; border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .equation.boxed { border-left-color: var(--accent); }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -946,7 +1040,7 @@ html { scroll-behavior: smooth; }
   <text x="250" y="358" fill="#e5e1d8" font-size="12" font-family="Manrope" text-anchor="middle" font-weight="700">Consciousness</text>
   <!-- Arrows: Prat -> Sn -->
   <line x1="115" y1="116" x2="115" y2="156" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
-  <text x="98" y="140" fill="#F1B82F" font-size="9" font-family="Manrope">weights</text>
+  <text x="108" y="140" fill="#F1B82F" font-size="9" font-family="Manrope" text-anchor="end">weights</text>
   <!-- Pren -> F -->
   <line x1="385" y1="116" x2="385" y2="156" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
   <text x="393" y="140" fill="#F1B82F" font-size="9" font-family="Manrope">actions</text>
@@ -960,8 +1054,8 @@ html { scroll-behavior: smooth; }
   <!-- Pi feedback to Prat/Pren (red) -->
   <path d="M210,165 C170,140 140,125 138,120" stroke="#cc6666" stroke-width="1.2" fill="none" stroke-dasharray="4,3" marker-end="url(#a-r)"/>
   <path d="M290,165 C330,140 360,125 362,120" stroke="#cc6666" stroke-width="1.2" fill="none" stroke-dasharray="4,3" marker-end="url(#a-r)"/>
-  <text x="170" y="148" fill="#cc6666" font-size="8" font-family="Manrope">optimize</text>
-  <text x="310" y="148" fill="#cc6666" font-size="8" font-family="Manrope">optimize</text>
+  <text x="165" y="133" fill="#cc6666" font-size="8" font-family="Manrope">optimize</text>
+  <text x="315" y="133" fill="#cc6666" font-size="8" font-family="Manrope">optimize</text>
   <!-- Phi/Ccap -> Consciousness -->
   <line x1="155" y1="300" x2="220" y2="332" stroke="#7cb87c" stroke-width="1" marker-end="url(#a-grn)"/>
   <line x1="345" y1="300" x2="280" y2="332" stroke="#7cb87c" stroke-width="1" marker-end="url(#a-grn)"/>
