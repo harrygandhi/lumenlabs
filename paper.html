@@ -190,7 +190,36 @@ li strong { color: var(--fg); }
 }
 
 
-/* For narrow screens, show popup below */
+/* Mobile bottom-sheet popups */
+.popup-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.popup-overlay.active { display: block; opacity: 1; }
+
+@media (max-width: 768px) {
+  .margin-popup, .def-popup {
+    position: fixed !important;
+    bottom: 0 !important; left: 0 !important; right: 0 !important;
+    top: auto !important;
+    width: 100% !important; max-width: 100% !important;
+    border-radius: 16px 16px 0 0;
+    padding: 28px 24px 36px;
+    transform: translateY(100%);
+    transition: transform 0.35s ease;
+  }
+  .margin-popup.sheet-open, .def-popup.sheet-open {
+    display: block !important;
+    transform: translateY(0);
+  }
+  .margin-popup::before, .def-popup::before {
+    content: ''; display: block;
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--muted); opacity: 0.3;
+    margin: 0 auto 16px;
+  }
+}
 
 
 /* Definition terms */
@@ -1302,46 +1331,95 @@ html { scroll-behavior: smooth; }
 
   applyTheme('dark');
 
-  // Position popups in the left margin on hover
+  // Popup system — desktop: hover in margin; mobile: bottom sheet on tap
   var allRefs = document.querySelectorAll('.margin-ref, .def-term');
-  
+  var isMobile = function() { return window.innerWidth <= 768; };
+
+  // Overlay for mobile bottom sheets
+  var overlay = document.createElement('div');
+  overlay.className = 'popup-overlay';
+  document.body.appendChild(overlay);
+
+  var activeSheet = null;
+
+  function closeSheet() {
+    if (activeSheet) {
+      activeSheet.classList.remove('sheet-open');
+      overlay.classList.remove('active');
+      // After transition, hide it
+      var closing = activeSheet;
+      setTimeout(function() {
+        if (!closing.classList.contains('sheet-open')) {
+          closing.style.display = 'none';
+        }
+      }, 350);
+      activeSheet = null;
+    }
+  }
+
+  overlay.addEventListener('click', closeSheet);
+
   allRefs.forEach(function(el) {
     var popup = el.querySelector('.margin-popup, .def-popup');
     if (!popup) return;
-    
+
+    // Mobile: tap to open bottom sheet
+    el.addEventListener('click', function(e) {
+      if (!isMobile()) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (activeSheet === popup) {
+        closeSheet();
+        return;
+      }
+      closeSheet();
+
+      popup.style.display = 'block';
+      overlay.classList.add('active');
+      // Force reflow so transition fires
+      popup.offsetHeight;
+      popup.classList.add('sheet-open');
+      activeSheet = popup;
+    });
+
+    // Desktop: hover positioning
     el.addEventListener('mouseenter', function(e) {
+      if (isMobile()) return;
       var rect = el.getBoundingClientRect();
       var container = document.querySelector('.paper-container');
       var containerRect = container.getBoundingClientRect();
-      
+
       var leftSpace = containerRect.left;
-      
+
       if (leftSpace > 280) {
         popup.style.left = (containerRect.left - 260) + 'px';
       } else {
         popup.style.left = rect.left + 'px';
       }
-      
+
       var top = rect.top - 8;
       if (top + 300 > window.innerHeight) {
         top = window.innerHeight - 320;
       }
       if (top < 10) top = 10;
       popup.style.top = top + 'px';
-      
+
       popup.style.display = 'block';
     });
-    
+
     el.addEventListener('mouseleave', function(e) {
+      if (isMobile()) return;
       setTimeout(function() {
         if (!el.matches(':hover') && !popup.matches(':hover')) {
           popup.style.display = 'none';
         }
       }, 800);
     });
-    
+
     if (popup) {
       popup.addEventListener('mouseleave', function() {
+        if (isMobile()) return;
         popup.style.display = 'none';
       });
     }

@@ -162,13 +162,16 @@ h1 em::after {
 
 .automata-note {
   margin-top: auto; padding-top: 20px;
-  font-size: 0.7rem; line-height: 1.65; color: var(--muted);
+  font-size: 0.78rem; line-height: 1.6; color: var(--muted);
   max-width: 480px; font-weight: 300;
   opacity: 0; transform: translateY(10px);
   transition: opacity 0.8s ease, transform 0.8s ease, color var(--transition-speed);
 }
 .automata-note.visible {
   opacity: 1; transform: translateY(0);
+}
+.automata-note.revealed {
+  transform: translateY(0);
 }
 .footer-line a {
   color: var(--accent); text-decoration: none; cursor: pointer;
@@ -273,7 +276,7 @@ canvas#automata {
   canvas#automata { min-height: 55vh; }
   .theme-toggle { top: 20px; left: 32px; }
   .modal-card { margin: 20px; padding: 36px 28px; }
-  .automata-note { font-size: 0.65rem; }
+  .automata-note { font-size: 0.72rem; }
 }
 </style>
 <script type="text/javascript">
@@ -503,6 +506,9 @@ canvas#automata {
     mouseActive = true;
     if (!noteRevealed) {
       noteRevealed = true;
+      automataNote.classList.add('revealed');
+    }
+    if (!automataNote.classList.contains('visible')) {
       automataNote.classList.add('visible');
     }
   });
@@ -511,6 +517,9 @@ canvas#automata {
     mouseActive = false;
     mouseX = -1;
     mouseY = -1;
+    if (noteRevealed) {
+      automataNote.classList.remove('visible');
+    }
   });
 
   function getColors() {
