@@ -66,7 +66,7 @@ body::after {
 
 .hero-left {
   display: flex; flex-direction: column; justify-content: center;
-  padding: 120px 80px; position: relative;
+  padding: 80px 80px 40px; position: relative;
 }
 .hero-left::before {
   content: ''; position: absolute; top: 30%; left: -10%;
@@ -103,10 +103,10 @@ body::after {
 
 h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.1rem, 3.5vw, 2.8rem);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 400; line-height: 1.12; letter-spacing: -0.025em;
-  margin-bottom: 24px; opacity: 0;
-  animation: slideIn 0.7s ease-out 0.4s forwards;
+  margin-bottom: 20px; opacity: 0;
+  animation: slideIn 0.7s ease-out 0.3s forwards;
   transition: color var(--transition-speed);
 }
 h1 em {
@@ -119,9 +119,9 @@ h1 em::after {
 }
 
 .hero-body {
-  font-size: 0.95rem; line-height: 1.75; color: var(--muted);
-  max-width: 460px; font-weight: 300; margin-bottom: 36px;
-  opacity: 0; animation: slideIn 0.7s ease-out 0.6s forwards;
+  font-size: 0.88rem; line-height: 1.7; color: var(--muted);
+  max-width: 460px; font-weight: 300; margin-bottom: 28px;
+  opacity: 0; animation: slideIn 0.7s ease-out 0.5s forwards;
   transition: color var(--transition-speed);
 }
 
@@ -152,12 +152,23 @@ h1 em::after {
 [data-theme="light"] .btn-ghost:hover { border-color: rgba(0,0,0,0.2); background: rgba(0,0,0,0.03); }
 
 .footer-line {
-  margin-top: 40px; padding-top: 28px;
+  margin-top: 28px; padding-top: 20px;
   border-top: 1px solid var(--card-border);
-  font-size: 0.82rem; line-height: 1.6; color: var(--muted);
+  font-size: 0.78rem; line-height: 1.6; color: var(--muted);
   max-width: 480px; font-weight: 300; opacity: 0;
   animation: slideIn 0.7s ease-out 1s forwards;
   transition: color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.automata-note {
+  margin-top: auto; padding-top: 20px;
+  font-size: 0.7rem; line-height: 1.65; color: var(--muted);
+  max-width: 480px; font-weight: 300;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.8s ease, transform 0.8s ease, color var(--transition-speed);
+}
+.automata-note.visible {
+  opacity: 1; transform: translateY(0);
 }
 .footer-line a {
   color: var(--accent); text-decoration: none; cursor: pointer;
@@ -257,11 +268,12 @@ canvas#automata {
 
 @media (max-width: 960px) {
   .hero { grid-template-columns: 1fr; grid-template-rows: auto 55vh; }
-  .hero-left { padding: 60px 32px 40px; }
+  .hero-left { padding: 48px 32px 28px; }
   .hero-right { border-top: 1px solid var(--card-border); min-height: 55vh; }
   canvas#automata { min-height: 55vh; }
   .theme-toggle { top: 20px; left: 32px; }
   .modal-card { margin: 20px; padding: 36px 28px; }
+  .automata-note { font-size: 0.65rem; }
 }
 </style>
 <script type="text/javascript">
@@ -315,20 +327,19 @@ canvas#automata {
 
 <section class="hero">
   <div class="hero-left">
-    <div class="logo">
-      <img class="logo-mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABmElEQVR4nNWXsYrCQBCGjYIiQrpACAjXCTbXpbBNWpvb2sInyFU+Tt7A3pfwDXyENOkDdzP4BXK5nIbEuJ7wgSy78/87O5lsRqP/+MtP744wFiag/52hRVVkJriCJwTCEgLGXOaMHy28EHxhJYRCJGyFD9gyFjLHZ00/IxJgys7WCOyEAyKxYCBm7MCciDW6dtpVfE56NwTVXe2FVDgLmVBAxljKHJ81G2LMu4i/sZOEXR4R+7pDwVzD2ohY7UyQ9iULNaWfwqWFcJ0Law/EWt49DgrOI3UJAbIO4iUZMRJiejcLk8pdc36m486bMmGIqbEXt3bvky6fc+wrXnKsxf6dhfzaQFY43bcsuLYUxNyhMWsyoF0spGjSB4qXpMRWDbcu7lAgEQ7PAxg4EztCy6ka0PPXfq4tVbtan8q/9UTEaAQ/6iC/vtH0OdW+bh58/tU6MGio1uSlDFg/ArtFaP0xfJVGZLcVY8Ley6iSBXuvY0zYu5BUTNi7ktVM2LmUVkzYu5ZXTNj7MGkw8vxPsz/MPP/jdKjfN9N3qN87msOSAAAAAElFTkSuQmCC" alt="">
-      Lumen Labs
-    </div>
     <h1>Intelligence born<br>from <em>parsimony</em></h1>
     <p class="hero-body">
       Lumen Labs is building the first systems grounded in Cognitive Parsimony Theory &mdash; a mathematical framework in which consciousness emerges when a system learns to predict its world with extraordinary economy. Here, curiosity, attention, and awareness are not features we engineer. They are properties that surface on their own. We are not scaling our way to general intelligence. We are deriving it from first principles.
     </p>
     <div class="hero-buttons">
-      <a class="btn-main" href="paper.html">Read the Paper</a>
+      <a class="btn-main" href="paper">Read the Paper</a>
       <button class="btn-ghost" id="requestAccessBtn">Request Access</button>
     </div>
     <div class="footer-line">
       If you are interested in learning more about our work, or think we are woefully wrong, we encourage you to <a id="emailLink">reach out to us</a>.
+    </div>
+    <div class="automata-note" id="automataNote">
+      What you're watching is <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank" rel="noopener" style="color: var(--muted); text-decoration: underline; text-underline-offset: 2px;">Conway's Game of Life</a> &mdash; a grid of cells following four simple rules about birth, death, and survival. From this minimal substrate, self-organizing structures emerge, travel, interact, and evolve without any top-down design. This is the intuition behind Cognitive Parsimony Theory: consciousness isn't engineered from above, it climbs from below &mdash; driven by the pressure to predict efficiently.
     </div>
   </div>
 
@@ -482,11 +493,18 @@ canvas#automata {
   var PERTURB_RADIUS = 10;    // cells
   var PERTURB_CHANCE = 0.12;  // probability of flipping per cell per tick
 
+  var noteRevealed = false;
+  var automataNote = document.getElementById('automataNote');
+
   canvas.addEventListener('mousemove', function(e) {
     var rect = canvas.getBoundingClientRect();
     mouseX = Math.floor((e.clientX - rect.left) / STEP);
     mouseY = Math.floor((e.clientY - rect.top) / STEP);
     mouseActive = true;
+    if (!noteRevealed) {
+      noteRevealed = true;
+      automataNote.classList.add('visible');
+    }
   });
 
   canvas.addEventListener('mouseleave', function() {
