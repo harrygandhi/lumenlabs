@@ -650,7 +650,7 @@ html { scroll-behavior: smooth; }
 
 <h3>What Large Language Models Actually Do</h3>
 
-<p>Large language models (LLMs) like ChatGPT, Claude, and Gemini are, at their core, next-token predictors. Given a sequence of text, they predict what comes next. Through this deceptively simple objective&#8202;&#8212;&#8202;applied at enormous scale across trillions of tokens&#8202;&#8212;&#8202;they develop remarkable capabilities: fluent language generation, code synthesis, mathematical reasoning, and even rudimentary planning.</p>
+<p>Large language models (LLMs) like GPT-4, Claude, and Gemini are, at their core, next-token predictors. Given a sequence of text, they predict what comes next. Through this deceptively simple objective&#8202;&#8212;&#8202;applied at enormous scale across trillions of tokens&#8202;&#8212;&#8202;they develop remarkable capabilities: fluent language generation, code synthesis, mathematical reasoning, and even rudimentary planning.</p>
 
 <p>But the mechanism underlying these capabilities is fundamentally statistical. An LLM does not understand that fire is hot; it has learned that the token &#8220;hot&#8221; is statistically likely to follow &#8220;fire is.&#8221; This distinction becomes decisive when we ask the system to generalize beyond its training distribution. Consider the failure modes that persist even in frontier models:</p>
 
@@ -1012,9 +1012,7 @@ html { scroll-behavior: smooth; }
 
 <p>Memory shapes both sides of the $\pi$ ratio&#8202;&#8212;&#8202;the numerator (through $p(\theta)$) and the denominator (through learned salience weights). Without memory, $\pi$ minimization cannot proceed.</p>
 
-<h3>Prat and Pren: Attention and Action</h3>
 
-<p><strong><span class="def-term">Prat<span class="def-popup"><span class="def-symbol">Prat</span><span class="def-name">Predictive Relevance-weighted Attention</span><span class="def-desc">Determines salience weights w&#7522; in Sn. Learns which sensory inputs are most predictively useful. Controls the denominator of &#960;.</span></span></span></strong> (Predictive Relevance-weighted Attention) determines salience weights $w_i$ in $\text{Sn}$. It learns which inputs are predictively useful. <strong><span class="def-term">Pren<span class="def-popup"><span class="def-symbol">Pren</span><span class="def-name">Predictive Relevance-weighted Encoding</span><span class="def-desc">Selects actions that are predictable (low F) and informative (high Sn). Controls the numerator of &#960;.</span></span></span></strong> (Predictive Relevance-weighted Encoding) selects actions that are predictable (low $F$) and informative (high $\text{Sn}$). Together, Prat shapes the denominator and Pren shapes the numerator.</p>
 
 <h3>Variable Summary</h3>
 
@@ -1026,8 +1024,6 @@ html { scroll-behavior: smooth; }
 <tr><td>$\text{Sn}$</td><td>Sensory Information</td><td>Denominator of $\pi$</td><td>Salience-weighted Shannon info</td></tr>
 <tr><td>$\varphi$</td><td>Integration</td><td>Consciousness correlate</td><td>Information binding</td></tr>
 <tr><td>$C_{\text{cap}}$</td><td>Counterfactual Capacity</td><td>Consciousness correlate</td><td>Response repertoire richness</td></tr>
-<tr><td>Prat</td><td>Pred. Relevance Attention</td><td>Controls $\text{Sn}$</td><td>Learned salience weights</td></tr>
-<tr><td>Pren</td><td>Pred. Relevance Encoding</td><td>Controls $F$</td><td>Learned action selection</td></tr>
 </table>
 <div class="table-caption"><strong>Table 1:</strong> Complete variable summary for Cognitive Parsimony Theory.</div>
 </div>
@@ -1036,71 +1032,57 @@ html { scroll-behavior: smooth; }
 
 <!-- Figure 5: Variable Relationship Map - SVG -->
 <div class="figure-container">
-<svg viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="a-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#F1B82F"/></marker>
     <marker id="a-g" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#6e6b63"/></marker>
-    <marker id="a-r" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#cc6666"/></marker>
     <marker id="a-grn" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#7cb87c"/></marker>
   </defs>
   <!-- Memory -->
   <rect x="200" y="10" width="100" height="36" rx="8" fill="rgba(255,255,255,0.05)" stroke="#6e6b63"/>
   <text x="250" y="33" fill="#6e6b63" font-size="12" font-family="Manrope" text-anchor="middle" font-weight="500">Memory</text>
-  <!-- Prat and Pren -->
-  <rect x="70" y="80" width="90" height="36" rx="8" fill="rgba(241,184,47,0.08)" stroke="rgba(241,184,47,0.3)"/>
-  <text x="115" y="103" fill="#F1B82F" font-size="12" font-family="Manrope" text-anchor="middle" font-weight="600">Prat</text>
-  <rect x="340" y="80" width="90" height="36" rx="8" fill="rgba(241,184,47,0.08)" stroke="rgba(241,184,47,0.3)"/>
-  <text x="385" y="103" fill="#F1B82F" font-size="12" font-family="Manrope" text-anchor="middle" font-weight="600">Pren</text>
   <!-- Sn and F -->
-  <rect x="70" y="160" width="90" height="36" rx="8" fill="rgba(241,184,47,0.12)" stroke="#F1B82F"/>
-  <text x="115" y="183" fill="#F1B82F" font-size="13" font-family="Playfair Display" text-anchor="middle" font-weight="700">Sn</text>
-  <rect x="340" y="160" width="90" height="36" rx="8" fill="rgba(241,184,47,0.12)" stroke="#F1B82F"/>
-  <text x="385" y="183" fill="#F1B82F" font-size="13" font-family="Playfair Display" text-anchor="middle" font-weight="700">F</text>
+  <rect x="70" y="100" width="90" height="36" rx="8" fill="rgba(241,184,47,0.12)" stroke="#F1B82F"/>
+  <text x="115" y="123" fill="#F1B82F" font-size="13" font-family="Playfair Display" text-anchor="middle" font-weight="700">Sn</text>
+  <rect x="340" y="100" width="90" height="36" rx="8" fill="rgba(241,184,47,0.12)" stroke="#F1B82F"/>
+  <text x="385" y="123" fill="#F1B82F" font-size="13" font-family="Playfair Display" text-anchor="middle" font-weight="700">F</text>
   <!-- Pi -->
-  <rect x="195" y="160" width="110" height="36" rx="8" fill="rgba(241,184,47,0.15)" stroke="#F1B82F" stroke-width="1.5"/>
-  <text x="250" y="183" fill="#F1B82F" font-size="14" font-family="Playfair Display" text-anchor="middle" font-weight="700">&#960; = F/Sn</text>
+  <rect x="195" y="100" width="110" height="36" rx="8" fill="rgba(241,184,47,0.15)" stroke="#F1B82F" stroke-width="1.5"/>
+  <text x="250" y="123" fill="#F1B82F" font-size="14" font-family="Playfair Display" text-anchor="middle" font-weight="700">&#960; = F/Sn</text>
   <!-- Phi and Ccap -->
-  <rect x="100" y="260" width="90" height="36" rx="8" fill="rgba(100,200,130,0.08)" stroke="rgba(100,200,130,0.3)"/>
-  <text x="145" y="283" fill="#7cb87c" font-size="12" font-family="Playfair Display" text-anchor="middle" font-style="italic">&#966;</text>
-  <rect x="310" y="260" width="90" height="36" rx="8" fill="rgba(100,200,130,0.08)" stroke="rgba(100,200,130,0.3)"/>
-  <text x="355" y="283" fill="#7cb87c" font-size="11" font-family="Manrope" text-anchor="middle">C<tspan font-size="9" dy="2">cap</tspan></text>
+  <rect x="100" y="200" width="90" height="36" rx="8" fill="rgba(100,200,130,0.08)" stroke="rgba(100,200,130,0.3)"/>
+  <text x="145" y="223" fill="#7cb87c" font-size="12" font-family="Playfair Display" text-anchor="middle" font-style="italic">&#966;</text>
+  <rect x="310" y="200" width="90" height="36" rx="8" fill="rgba(100,200,130,0.08)" stroke="rgba(100,200,130,0.3)"/>
+  <text x="355" y="223" fill="#7cb87c" font-size="11" font-family="Manrope" text-anchor="middle">C<tspan font-size="9" dy="2">cap</tspan></text>
   <!-- Consciousness -->
-  <rect x="185" y="335" width="130" height="36" rx="8" fill="rgba(255,255,255,0.05)" stroke="#6e6b63"/>
-  <text x="250" y="358" fill="#e5e1d8" font-size="12" font-family="Manrope" text-anchor="middle" font-weight="700">Consciousness</text>
-  <!-- Arrows: Prat -> Sn -->
-  <line x1="115" y1="116" x2="115" y2="156" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
-  <text x="108" y="140" fill="#F1B82F" font-size="9" font-family="Manrope" text-anchor="end">weights</text>
-  <!-- Pren -> F -->
-  <line x1="385" y1="116" x2="385" y2="156" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
-  <text x="393" y="140" fill="#F1B82F" font-size="9" font-family="Manrope">actions</text>
+  <rect x="185" y="275" width="130" height="36" rx="8" fill="rgba(255,255,255,0.05)" stroke="#6e6b63"/>
+  <text x="250" y="298" fill="#e5e1d8" font-size="12" font-family="Manrope" text-anchor="middle" font-weight="700">Consciousness</text>
+  <!-- Memory -> Sn (salience weights) -->
+  <line x1="215" y1="46" x2="130" y2="96" stroke="#6e6b63" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
+  <text x="148" y="64" fill="#6e6b63" font-size="9" font-family="Manrope">salience weights</text>
+  <!-- Memory -> F (prior) -->
+  <line x1="285" y1="46" x2="370" y2="96" stroke="#6e6b63" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
+  <text x="345" y="64" fill="#6e6b63" font-size="9" font-family="Manrope">prior p(&#952;)</text>
   <!-- Sn -> Pi -->
-  <line x1="164" y1="178" x2="191" y2="178" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
+  <line x1="164" y1="118" x2="191" y2="118" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
+  <text x="178" y="112" fill="#F1B82F" font-size="8" font-family="Manrope" text-anchor="middle">denom.</text>
   <!-- F -> Pi -->
-  <line x1="336" y1="178" x2="309" y2="178" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
+  <line x1="336" y1="118" x2="309" y2="118" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
+  <text x="322" y="112" fill="#F1B82F" font-size="8" font-family="Manrope" text-anchor="middle">numer.</text>
   <!-- Pi -> Phi, Ccap (dashed) -->
-  <line x1="225" y1="200" x2="160" y2="256" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
-  <line x1="275" y1="200" x2="340" y2="256" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
-  <!-- Pi feedback to Prat/Pren (red) -->
-  <path d="M210,165 C170,140 140,125 138,120" stroke="#cc6666" stroke-width="1.2" fill="none" stroke-dasharray="4,3" marker-end="url(#a-r)"/>
-  <path d="M290,165 C330,140 360,125 362,120" stroke="#cc6666" stroke-width="1.2" fill="none" stroke-dasharray="4,3" marker-end="url(#a-r)"/>
-  <text x="165" y="133" fill="#cc6666" font-size="8" font-family="Manrope">optimize</text>
-  <text x="315" y="133" fill="#cc6666" font-size="8" font-family="Manrope">optimize</text>
+  <line x1="225" y1="140" x2="160" y2="196" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
+  <line x1="275" y1="140" x2="340" y2="196" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
   <!-- Phi/Ccap -> Consciousness -->
-  <line x1="155" y1="300" x2="220" y2="332" stroke="#7cb87c" stroke-width="1" marker-end="url(#a-grn)"/>
-  <line x1="345" y1="300" x2="280" y2="332" stroke="#7cb87c" stroke-width="1" marker-end="url(#a-grn)"/>
+  <line x1="155" y1="240" x2="220" y2="272" stroke="#7cb87c" stroke-width="1" marker-end="url(#a-grn)"/>
+  <line x1="345" y1="240" x2="280" y2="272" stroke="#7cb87c" stroke-width="1" marker-end="url(#a-grn)"/>
   <!-- Pi -> Consciousness -->
-  <line x1="250" y1="200" x2="250" y2="331" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
-  <text x="260" y="270" fill="#F1B82F" font-size="9" font-family="Manrope">1/&#960;</text>
-  <!-- Memory dashed -->
-  <line x1="210" y1="46" x2="140" y2="76" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
-  <line x1="290" y1="46" x2="360" y2="76" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
-  <line x1="250" y1="46" x2="250" y2="156" stroke="#6e6b63" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a-g)"/>
-  <text x="264" y="75" fill="#6e6b63" font-size="8" font-family="Manrope">prior p(&#952;)</text>
+  <line x1="250" y1="140" x2="250" y2="271" stroke="#F1B82F" stroke-width="1.2" marker-end="url(#a-b)"/>
+  <text x="260" y="210" fill="#F1B82F" font-size="9" font-family="Manrope">1/&#960;</text>
 </svg>
-<div class="figure-caption"><strong>Figure 5: Variable relationship map.</strong> Solid arrows show direct causal relationships; dashed arrows show emergent or supportive relationships. Red dashed arrows show the optimization feedback loop. Memory shapes the prior $p(\theta)$ in $F$ and provides the learned weights used by Prat and Pren.</div>
+<div class="figure-caption"><strong>Figure 5: Variable relationship map.</strong> Memory shapes both sides of the $\pi$ ratio: the prior $p(\theta)$ in $F$ (numerator) and learned salience weights in $\text{Sn}$ (denominator). As $\pi$ decreases, integration ($\varphi$) and responsiveness ($C_{\text{capacity}}$) emerge as side effects. Consciousness is proportional to all three factors.</div>
 </div>
 
-<p>In plain English: Prat determines what the system attends to, setting $\text{Sn}$. Pren determines what actions it takes, affecting $F$. Together they determine $\pi$. The system adjusts both to minimize $\pi$&#8202;&#8212;&#8202;closing the loop. As $\pi$ decreases, integration ($\varphi$) and responsiveness ($C_{\text{capacity}}$) increase as side effects.</p>
+<p>In plain English: memory shapes both sides of the ratio. On the denominator side, learned salience weights determine what the system attends to, setting $\text{Sn}$. On the numerator side, the accumulated prior $p(\theta)$ determines prediction quality, affecting $F$. The system adjusts both to minimize $\pi$. As $\pi$ decreases, integration ($\varphi$) and responsiveness ($C_{\text{capacity}}$) increase as side effects.</p>
 
 <!-- ═══ SECTION 6: ARCHITECTURE ═══ -->
 <h2>Architecture: The Attend&#8211;Predict&#8211;Act&#8211;Learn Loop</h2>
@@ -1113,7 +1095,7 @@ html { scroll-behavior: smooth; }
 <div class="cycle-grid">
   <div class="cycle-card c-attend">
     <h5 style="color:#F1B82F">1. Attend</h5>
-    <p>Prat selects sensations. From millions of raw data points, a tractable subset is selected based on learned salience weights.</p>
+    <p>Select salient sensations. From millions of raw data points, a tractable subset is selected based on learned salience weights.</p>
     <div class="cycle-arrow">&#8594; S<sub>attended</sub></div>
   </div>
   <div class="cycle-card c-predict">
@@ -1123,16 +1105,16 @@ html { scroll-behavior: smooth; }
   </div>
   <div class="cycle-card c-act">
     <h5 style="color:#64c882">3. Act</h5>
-    <p>Pren evaluates candidate actions by imagining consequences. The action minimizing expected &#960; is selected.</p>
+    <p>Evaluate candidate actions by imagining consequences. The action minimizing expected &#960; is selected.</p>
     <div class="cycle-arrow" style="color:#64c882">&#8594; a<sub>t</sub>, o<sub>t+1</sub></div>
   </div>
   <div class="cycle-card c-learn">
     <h5 style="color:#cc7878">4. Learn</h5>
-    <p>Prediction error drives updates to: world model parameters, salience weights in Prat, and memory consolidation.</p>
+    <p>Prediction error drives updates to: world model parameters, salience weights, and memory consolidation.</p>
     <div class="cycle-arrow" style="color:#cc7878">&#8594; updated p(&#952;)</div>
   </div>
 </div>
-<div class="figure-caption"><strong>Figure 6: The CPT decision cycle.</strong> Each iteration: Prat selects sensory channels, the world model predicts, Pren selects an action minimizing expected $\pi$, and prediction error drives learning. The cycle repeats at 1&#8211;10 Hz.</div>
+<div class="figure-caption"><strong>Figure 6: The CPT decision cycle.</strong> Each iteration: the system selects salient sensory channels, the world model predicts, an action minimizing expected $\pi$ is selected, and prediction error drives learning. The cycle repeats at 1&#8211;10 Hz.</div>
 
 <h3>The World Model</h3>
 
@@ -1157,9 +1139,9 @@ html { scroll-behavior: smooth; }
 
 <h3>Memory Architecture</h3>
 
-<p><strong>Working memory</strong> holds the current attended sensations&#8202;&#8212;&#8202;the contents of &#8220;consciousness&#8221; at this moment. It is small (roughly 4&#8211;7 items), transient, and directly determined by Prat&#8217;s selections.</p>
+<p><strong>Working memory</strong> holds the current attended sensations&#8202;&#8212;&#8202;the contents of &#8220;consciousness&#8221; at this moment. It is small (roughly 4&#8211;7 items), transient, and directly determined by salience weights.</p>
 
-<p><strong>Episodic memory</strong> stores specific experiences as (state, action, outcome, surprise) tuples. Storage priority is gated by the product of surprise ($\pi$), attention (Prat weight), and deliberateness (Pren weight).</p>
+<p><strong>Episodic memory</strong> stores specific experiences as (state, action, outcome, surprise) tuples. Storage priority is gated by surprise ($\pi$) and salience weight: highly surprising, deliberately attended experiences are retained; routine ones are discarded.</p>
 
 <p><strong>Semantic memory</strong> consolidates regularities from many episodes into the world model&#8217;s learned parameters. Over time, individual episodes become generalized knowledge. This is the long-timescale memory that defines $p(\theta)$.</p>
 
