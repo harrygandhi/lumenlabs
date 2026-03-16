@@ -494,6 +494,50 @@ html { scroll-behavior: smooth; }
   .theme-toggle { top: 20px; left: 20px; }
 }
 
+/* Papers sidebar */
+.papers-sidebar {
+  position: fixed;
+  right: 32px;
+  top: 80px;
+  width: 150px;
+  z-index: 100;
+}
+.papers-sidebar .sidebar-home {
+  display: block;
+  font-size: 0.75rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; letter-spacing: 0.03em;
+  margin-bottom: 200px; padding: 0; transition: color 0.2s;
+}
+.papers-sidebar .sidebar-home:hover { color: var(--accent); border-left-color: transparent; }
+.papers-sidebar h4 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 16px 0;
+  padding: 0;
+  border: none;
+}
+.papers-sidebar a {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 0 6px 12px;
+  border-left: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.papers-sidebar a:hover { color: var(--accent); }
+.papers-sidebar a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+@media (max-width: 1300px) {
+  .papers-sidebar { display: none; }
+}
+
 /* Light mode popup shadows */
 [data-theme="light"] .margin-popup,
 [data-theme="light"] .def-popup {
@@ -610,12 +654,13 @@ html { scroll-behavior: smooth; }
 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
   <span class="toggle-knob" id="toggleKnob"></span>
 </button>
+<nav class="papers-sidebar">
+  <a href="/" class="sidebar-home">Back to home page</a>
+  <h4>Papers</h4>
+  <a href="paper" class="active">Cognitive Parsimony Theory<span style="display:block;font-size:0.65rem;opacity:0.6;margin-top:2px;">February, 2026</span></a>
+  <a href="atlas">ATLAS Benchmark<span style="display:block;font-size:0.65rem;opacity:0.6;margin-top:2px;">March, 2026</span></a>
+</nav>
 <div class="paper-container">
-
-<a href="/" class="back-link">
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
-  Back to Lumen Labs
-</a>
 
 <h1 class="paper-title">Cognitive Parsimony Theory</h1>
 <div class="paper-subtitle">Why Consciousness is a Constrained Optimization Problem</div>
@@ -639,18 +684,14 @@ html { scroll-behavior: smooth; }
 
 <p>Critically, the theory addresses what we call the <strong>Climbing Problem</strong>&#8202;&#8212;&#8202;the question of why some systems ascend from simple information processing to rich, general intelligence, while others remain fixed at their initial level of complexity. Existing frameworks like the <span class="margin-ref">Free Energy Principle<span class="margin-popup"><span class="popup-title">Free Energy Principle (FEP)</span>Karl Friston&#8217;s framework proposing that all living systems minimize free energy&#8202;&#8212;&#8202;prediction error plus model complexity. Powerful for homeostasis, but doesn&#8217;t explain ascent.<a class="popup-link" href="https://doi.org/10.1038/nrn2787" target="_blank" rel="noopener">Friston, 2010 &#8599;</a></span></span> explain how systems maintain their current state, but not how they climb to higher states. Minimizing $\pi$ provides the upward pressure: once prediction errors are low, the only way to further reduce $\pi$ is to seek richer, more informative experience.</p>
 
-<p>The full theory extends beyond $\pi$ to include integration (<span class="def-term">$\varphi$<span class="def-popup"><span class="def-symbol">&#966;</span><span class="def-name">Integration</span><span class="def-desc">Borrowed from IIT. Measures integrated information&#8202;&#8212;&#8202;how much the whole exceeds the sum of its parts. Not the definition of consciousness, but a necessary correlate.</span></span></span>), which measures information binding, and counterfactual capacity (<span class="def-term">$C_{\text{capacity}}$<span class="def-popup"><span class="def-symbol">C<sub>capacity</sub></span><span class="def-name">Counterfactual Capacity</span><span class="def-desc">Measures response repertoire richness. A conscious brain produces complex, differentiated responses; an unconscious brain produces stereotyped waves.</span></span></span>), which measures responsiveness:</p>
-
-<div class="equation boxed">$$\text{Consciousness} \;\propto\; \frac{1}{\pi} \times \varphi \times C_{\text{capacity}}$$<span class="eq-label">(2)</span></div>
-
-<p>The theory makes falsifiable predictions, provides a quantitative metric for measuring consciousness (the Consciousness Quotient, tested through Ramanujan-style mathematical insight problems), and offers a concrete direction for next-generation AGI architecture.</p>
+<p>The full theory extends beyond $\pi$ to include integration (<span class="def-term">$\varphi$<span class="def-popup"><span class="def-symbol">&#966;</span><span class="def-name">Integration</span><span class="def-desc">Borrowed from IIT. Measures integrated information&#8202;&#8212;&#8202;how much the whole exceeds the sum of its parts. Not the definition of consciousness, but a necessary correlate.</span></span></span>) and counterfactual capacity (<span class="def-term">$C_{\text{capacity}}$<span class="def-popup"><span class="def-symbol">C<sub>capacity</sub></span><span class="def-name">Counterfactual Capacity</span><span class="def-desc">Measures response repertoire richness. A conscious brain produces complex, differentiated responses; an unconscious brain produces stereotyped waves.</span></span></span>). It makes falsifiable predictions about learning capabilities&#8202;&#8212;&#8202;including exploration efficiency, adaptive attention, and world model convergence&#8202;&#8212;&#8202;that distinguish $\pi$-optimizing systems from existing approaches, and offers a concrete direction for next-generation AGI architecture.</p>
 
 <!-- ═══ SECTION 1: LIMITS OF CURRENT AI ═══ -->
 <h2>The Limits of Current AI</h2>
 
 <h3>What Large Language Models Actually Do</h3>
 
-<p>Large language models (LLMs) like GPT-4, Claude, and Gemini are, at their core, next-token predictors. Given a sequence of text, they predict what comes next. Through this deceptively simple objective&#8202;&#8212;&#8202;applied at enormous scale across trillions of tokens&#8202;&#8212;&#8202;they develop remarkable capabilities: fluent language generation, code synthesis, mathematical reasoning, and even rudimentary planning.</p>
+<p>Large language models (LLMs) like ChatGPT, Claude, and Gemini are, at their core, next-token predictors. Given a sequence of text, they predict what comes next. Through this deceptively simple objective&#8202;&#8212;&#8202;applied at enormous scale across trillions of tokens&#8202;&#8212;&#8202;they develop remarkable capabilities: fluent language generation, code synthesis, mathematical reasoning, and even rudimentary planning.</p>
 
 <p>But the mechanism underlying these capabilities is fundamentally statistical. An LLM does not understand that fire is hot; it has learned that the token &#8220;hot&#8221; is statistically likely to follow &#8220;fire is.&#8221; This distinction becomes decisive when we ask the system to generalize beyond its training distribution. Consider the failure modes that persist even in frontier models:</p>
 
@@ -1014,6 +1055,7 @@ html { scroll-behavior: smooth; }
 
 
 
+
 <h3>Variable Summary</h3>
 
 <div class="table-container">
@@ -1150,60 +1192,48 @@ html { scroll-behavior: smooth; }
 <p>A key feature of CPT is that it separates the <em>theory of consciousness</em> from the <em>engineering of prediction</em>. The theory says: minimize $\pi = F / \text{Sn}$, and consciousness-correlated properties ($\varphi$, $C_{\text{capacity}}$) will emerge. This means CPT can be tested across radically different architectures&#8202;&#8212;&#8202;a linear model on a Raspberry Pi, an RSSM on a GPU, or a transformer on a cloud server&#8202;&#8212;&#8202;and the predictions remain the same.</p>
 
 <!-- ═══ SECTION 7: MEASURING CONSCIOUSNESS ═══ -->
-<h2>Measuring Consciousness: The Consciousness Quotient</h2>
+<h2>Evaluating $\pi$-Optimizing Systems</h2>
 
-<h3>The Insight Hypothesis</h3>
+<h3>From Consciousness Measurement to Learning Evaluation</h3>
 
-<p>If consciousness arises from efficient information processing (low $\pi$), then conscious systems should demonstrate <em>disproportionate efficiency</em> on problems requiring genuine understanding. We call this the Insight Hypothesis.</p>
+<p>If CPT is correct, how do we test it? Measuring consciousness directly is philosophically contested and operationally intractable&#8202;&#8212;&#8202;there is no consensus on what a &#8220;consciousness detector&#8221; would look like. But CPT makes a stronger claim than most consciousness theories: it specifies an optimization objective ($\pi$ minimization) that should produce specific, measurable learning capabilities. We can test the theory by testing those capabilities.</p>
 
-<h3>The Consciousness Quotient</h3>
+<p>The key insight is that $\pi$ minimization predicts not just <em>what</em> a system learns, but <em>how</em> it learns. A system optimizing $\pi = F/\text{Sn}$ should exhibit qualitatively different learning behavior than a system minimizing $F$ alone (as in standard predictive coding) or maximizing external reward (as in reinforcement learning). These differences are empirically testable.</p>
 
-<div class="equation">$$\text{CQ} = \frac{\text{Performance}}{\text{Training}} \times \text{Difficulty} \times \text{Novelty}$$<span class="eq-label">(13)</span></div>
+<h3>Testing Learning Environments, Not Learning Tasks</h3>
 
-<div class="table-container">
-<table class="cq-table">
-<tr><th>CQ Range</th><th>Interpretation</th><th>Example</th></tr>
-<tr><td>&lt; 1</td><td>Unconscious; linear scaling with training</td><td>Lookup table</td></tr>
-<tr><td>1&#8211;10</td><td>Uncertain; could be efficient unconscious</td><td>Well-trained network</td></tr>
-<tr><td>&gt; 10</td><td>Likely conscious; disproportionate efficiency</td><td>Transfer learning</td></tr>
-<tr><td>&gt; 100</td><td>Almost certainly conscious; insight-level</td><td>Discovering formulas from sparse data</td></tr>
-</table>
-<div class="table-caption"><strong>Table 2:</strong> Consciousness Quotient thresholds.</div>
-</div>
+<p>Existing benchmarks for embodied AI&#8202;&#8212;&#8202;<span class="margin-ref">LIBERO<span class="margin-popup"><span class="popup-title">LIBERO</span>Liu et al. (2023). 130 language-conditioned manipulation tasks for benchmarking lifelong robot learning. Measures task execution, not the learning process itself.<a class="popup-link" href="https://arxiv.org/abs/2305.11213" target="_blank" rel="noopener">View paper &#8599;</a></span></span>, CALVIN, SIMPLER, and others&#8202;&#8212;&#8202;evaluate task execution: can the robot pick up the mug, follow the instruction, reach the goal? These benchmarks assume the system has already been trained. They measure the <em>output</em> of learning, not the <em>process</em> of learning itself.</p>
 
-<h3>Ramanujan-Style Problem Solving as Consciousness Probe</h3>
+<p>CPT predicts something about the process. A $\pi$-optimizing system dropped into a novel environment with no prior training should learn about that environment in a characteristic way&#8202;&#8212;&#8202;actively seeking informative experience, building predictive models with increasing efficiency, adapting its attention to track what matters. The right evaluation framework tests how a system learns about a <em>world from scratch</em>, not whether it can execute a pre-trained task.</p>
 
-<!-- Figure 7: Ramanujan Levels -->
-<div class="ram-levels">
-  <div class="ram-level">
-    <div><div class="ram-title">Level 1: Sequence Completion</div><div class="ram-desc">Derive $n(n+1)(2n+1)/6$ from 4 examples</div></div>
-    <div class="ram-cq">CQ &#8776; 25</div>
-  </div>
-  <div class="ram-level">
-    <div><div class="ram-title">Level 2: Formula Discovery</div><div class="ram-desc">Find partition function patterns from 7 examples</div></div>
-    <div class="ram-cq">CQ &#8776; 40</div>
-  </div>
-  <div class="ram-level">
-    <div><div class="ram-title">Level 3: Meta-Mathematical Insight</div><div class="ram-desc">Recognize that $3.14159\ldots$ is computable but unpatterned</div></div>
-    <div class="ram-cq">CQ &#8776; 50</div>
-  </div>
-  <div class="ram-level">
-    <div><div class="ram-title">Level 4: Creative Generalization</div><div class="ram-desc">Derive binomial theorem from $(a+b)^2$ alone</div></div>
-    <div class="ram-cq">CQ &#8776; 60</div>
-  </div>
-</div>
-<div class="figure-caption"><strong>Figure 7: <span class="margin-ref">Ramanujan<span class="margin-popup"><span class="popup-title">Ref [13]</span>Ramanujan, S. (1914). Modular equations and approximations to &#960;. <em>Quarterly Journal of Mathematics</em>, 45, 350&#8211;372. A mathematical prodigy whose insights seemed to bypass conventional derivation.<a class="popup-link" href="https://en.wikipedia.org/wiki/Srinivasa_Ramanujan" target="_blank" rel="noopener">Learn more &#8599;</a></span></span> problem levels.</strong> Each level requires deeper insight from less training data, producing higher CQ scores for conscious systems.</div>
+<p>This reframes evaluation from task-centric to environment-centric: place an embodied system in a novel environment, give it no demonstrations, no reward signal, no prior training, and measure how it learns.</p>
 
-<p>Problems inspired by Ramanujan cannot be solved by pattern matching alone&#8202;&#8212;&#8202;they require perceiving relationships not in the data. The degree of insight, relative to training, <em>is</em> CQ.</p>
+<p>For a thorough testing suite built on these principles, see the <a href="atlas" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(241,184,47,0.4);">ATLAS Benchmark</a>.</p>
 
-<h3>A Turing Test for Consciousness</h3>
+<h3>Five Predicted Learning Capabilities</h3>
 
-<p>Turing&#8217;s test measures conversational imitation. CQ measures <em>insight</em>. A system passing the Turing test with CQ $< 1$ is a mimic. A system with CQ $> 100$ on novel problems likely processes information in a way functionally equivalent to conscious insight.</p>
+<p>$\pi$ minimization makes specific predictions about five learning capabilities that can be evaluated in embodied systems:</p>
+
+<p><strong>Exploration efficiency.</strong> The $\text{Sn}$ denominator creates pressure to seek informative experience. A $\pi$-optimizing system should explore its environment more efficiently than a random walker or a system driven only by external reward&#8202;&#8212;&#8202;discovering more of the world per unit of action. This is a direct behavioral consequence of $\text{Sn}$ maximization: once $F$ is low, the only way to further reduce $\pi$ is to increase $\text{Sn}$ by seeking richer sensory input.</p>
+
+<p><strong>World model convergence.</strong> $\pi$ minimization simultaneously reduces $F$ (prediction error) and increases $\text{Sn}$ (information quality). This dual optimization should produce faster, more sample-efficient world models than $F$ minimization alone. The prediction is testable: compare cycles to convergence for a $\pi$-optimizing system against a system that only minimizes prediction error.</p>
+
+<p><strong>Adaptive attention.</strong> The salience weights $w_i$ in $\text{Sn}$ are learned from experience. As the environment changes&#8202;&#8212;&#8202;lights go off, a sensor is occluded, a new obstacle appears&#8202;&#8212;&#8202;these weights should re-adapt. A $\pi$-optimizing system should learn which sensor channels carry the most predictive information in context, and re-learn when conditions change. This can be tested by measuring whether the system&#8217;s attention allocation tracks ground-truth informativeness across changing conditions.</p>
+
+<p><strong>Sensor degradation resilience.</strong> A system with learned salience weights has a natural mechanism for graceful degradation: when a sensor fails, its information content drops, its salience weight should decrease, and the system should redistribute processing to functioning channels. This is a safety-critical capability that follows directly from the theory and is absent from current benchmarks.</p>
+
+<p><strong>Memory efficiency.</strong> $\pi$ minimization requires memory at multiple timescales. The theory predicts that storage priority is gated by surprise and salience: highly surprising, deliberately attended experiences should be retained while routine ones are discarded. This predicts positive transfer when a system revisits a previously explored environment&#8202;&#8212;&#8202;its stored experiences should accelerate re-learning compared to a cold start.</p>
+
+<h3>Evaluation Principles</h3>
+
+<p>Any evaluation framework for $\pi$-optimizing systems should follow several principles. First, <strong>zero-shot evaluation</strong>: the system receives no prior training data, demonstrations, or reward functions. Learning occurs entirely during evaluation. Second, <strong>architecture agnosticism</strong>: the benchmarks test capabilities, not implementations&#8202;&#8212;&#8202;any embodied system can be evaluated. Third, <strong>graduated access</strong>: some evaluations require only observable behavior (where the robot moves, how it avoids collisions), while deeper evaluations can use internally exposed signals like prediction error and attention vectors. Fourth, <strong>ablation-friendly</strong>: every evaluation is most informative when comparing a full system against ablated versions of itself&#8202;&#8212;&#8202;with curiosity disabled, with memory removed, with attention fixed&#8202;&#8212;&#8202;isolating the contribution of each component.</p>
+
+<p>These five capabilities and four evaluation principles define a research program for empirically testing CPT&#8217;s predictions. A $\pi$-optimizing system that fails to outperform baselines on these measures would constitute evidence against the theory. A system that consistently demonstrates all five capabilities would constitute evidence for it.</p>
 
 <!-- ═══ SECTION 8: OPEN QUESTIONS ═══ -->
 <h2>Open Questions and Failure Modes</h2>
 
-<p>While this theory covers decent ground in terms of framework development, there are still many areas that are open&#8202;&#8212;&#8202;and <span class="margin-ref">waiting to be worked on<span class="margin-popup"><span class="popup-title">Contribute</span>If you want to work on any of these areas, <a href="/cdn-cgi/l/email-protection#d7bfb097bba2bab2b9a5b2a4b2b6a5b4bff9b6be" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">reach out to us</a>.</span></span>.</p>
+<p>While this theory covers decent ground in terms of framework development, there are still many areas that are open&#8202;&#8212;&#8202;and <span class="margin-ref">waiting to be worked on<span class="margin-popup"><span class="popup-title">Contribute</span>If you want to work on any of these areas, <a href="mailto:hg@lumenresearch.ai" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)">reach out to us</a>.</span></span>.</p>
 
 <h3>The Problem of Compute</h3>
 <p>Computing $\text{Sn}$ requires estimating joint Shannon information across all channels&#8202;&#8212;&#8202;a space growing exponentially with $n$ inputs. This may push real-time $\pi$ computation into EXPTIME territory. Mitigations include pairwise approximation, hierarchical compression, and attention-based sparsification.</p>
@@ -1229,15 +1259,6 @@ html { scroll-behavior: smooth; }
 <p>The Rest quadrant contains phenomenologically distinct states. Practical measurement of $\varphi$ and $C_{\text{capacity}}$ with sufficient precision remains formidable.</p>
 <div class="failure-mode"><strong>Failure mode:</strong> If $\varphi$ and $C_{\text{capacity}}$ cannot reliably distinguish meditation from sleep in practice, the state-space model is incomplete.</div>
 
-<h3>The Limitations of Consciousness Testing</h3>
-<p>The Consciousness Quotient is a useful probe but not a complete measure.</p>
-<p><strong>Mathematical insight is one dimension, not all of it.</strong> Consciousness may involve aesthetic experience, emotional processing, self-awareness, or social cognition.</p>
-<p><strong>CQ conflates consciousness with intelligence.</strong> A system might be conscious but unable to solve abstract problems.</p>
-<p><strong>The test is anthropocentric.</strong> Consciousness in a different architecture might manifest in ways we cannot test.</p>
-<p><strong>Performance metrics are indirect.</strong> CQ measures behavior, not internal states.</p>
-<p>CQ should be understood as a <em>necessary condition</em>, not sufficient. A complete framework will require converging evidence: CQ (behavioral), $\pi$/$\varphi$/$C_{\text{capacity}}$ (computational), self-report quality (phenomenological), and perhaps yet-to-be-invented measurement approaches.</p>
-<div class="failure-mode"><strong>Failure mode:</strong> If CQ measures intelligence rather than consciousness, the Insight Hypothesis is falsified and the measurement framework must be rethought.</div>
-
 <!-- ═══ SECTION 9: FALSIFIABILITY ═══ -->
 <h2>Falsifiability</h2>
 
@@ -1248,21 +1269,19 @@ html { scroll-behavior: smooth; }
 <ul>
 <li><strong>$\pi$ does not decrease during learning.</strong> If a learning system shows no $\pi$ decrease, the core equation is wrong.</li>
 <li><strong>$\pi$ and $\varphi$ are uncorrelated.</strong> If low $\pi$ coexists with low $\varphi$, the integration hypothesis fails.</li>
-<li><strong>CQ does not discriminate.</strong> If CQ cannot distinguish conscious from unconscious systems, the metric is invalid.</li>
-<li><strong>Unconscious systems achieve high CQ.</strong> If CQ $> 100$ is routinely achieved by unconscious systems, the Insight Hypothesis fails.</li>
 <li><strong>$\pi$-optimized systems show no advantage.</strong> If $\pi$ minimization produces no improvement over $F$ minimization alone, the denominator adds nothing.</li>
 </ul>
 
 <!-- ═══ SECTION 10: CONCLUSION ═══ -->
 <h2>Conclusion</h2>
 
-<p>Cognitive Parsimony Theory proposes that conscious experience arises from optimizing predictive efficiency: $\pi = F/\text{Sn}$. Combined with $\varphi$ and $C_{\text{capacity}}$, it addresses why consciousness arises (the Climbing Problem), how it works (dual optimization), and how to measure it (CQ).</p>
+<p>Cognitive Parsimony Theory proposes that conscious experience arises from optimizing predictive efficiency: $\pi = F/\text{Sn}$. Combined with $\varphi$ and $C_{\text{capacity}}$, it addresses why consciousness arises (the Climbing Problem), how it works (dual optimization), and how to test it (predicted learning capabilities including exploration efficiency, adaptive attention, world model convergence, sensor resilience, and memory efficiency).</p>
 
 <p>Its strengths: mathematical precision, testability, engineering applicability. It makes falsifiable predictions and suggests a next-generation AGI architecture.</p>
 
 <p>Its weaknesses: computational tractability is uncertain, architecture is unspecified, memory is undertheorized, universality is unproven, and the threshold problem is open.</p>
 
-<div class="callout">We offer this not as a complete theory, but as a mathematically precise, empirically testable starting point&#8202;&#8212;&#8202;one grounded in the ancient principle that <strong>nature favors the parsimonious</strong>.</div>
+<div class="callout">We offer this not as a complete theory, but as a mathematically precise, empirically testable starting point&#8202;&#8212;&#8202;one grounded in the ancient principle that <em>nature favors the parsimonious</em>.</div>
 
 <!-- ═══ REFERENCES ═══ -->
 <h2>References</h2>
@@ -1279,13 +1298,15 @@ html { scroll-behavior: smooth; }
 <div class="ref-item"><span class="ref-num">9.</span><span>Kierkegaard, S. (1844/1980). <em>The Concept of Anxiety</em>. Princeton University Press.</span></div>
 <div class="ref-item"><span class="ref-num">10.</span><span>Koch, C., et al. (2016). Neural correlates of consciousness: Progress and problems. <em>Nature Reviews Neuroscience</em>, 17(5), 307&#8211;321.</span></div>
 <div class="ref-item"><span class="ref-num">11.</span><span>LeCun, Y. (2022). A path towards autonomous machine intelligence. <em>OpenReview</em> (preprint).</span></div>
-<div class="ref-item"><span class="ref-num">12.</span><span>Oizumi, M., Albantakis, L., &amp; Tononi, G. (2014). From the phenomenology to the mechanisms of consciousness: IIT 3.0. <em>PLOS Computational Biology</em>, 10(5).</span></div>
-<div class="ref-item"><span class="ref-num">13.</span><span>Ramanujan, S. (1914). Modular equations and approximations to $\pi$. <em>Quarterly Journal of Mathematics</em>, 45, 350&#8211;372.</span></div>
-<div class="ref-item"><span class="ref-num">14.</span><span>Rao, R. P. N., &amp; Ballard, D. H. (1999). Predictive coding in the visual cortex. <em>Nature Neuroscience</em>, 2, 79&#8211;87.</span></div>
-<div class="ref-item"><span class="ref-num">15.</span><span>Seth, A. K. (2014). A predictive processing theory of sensorimotor contingencies. <em>Cognitive Science</em>, 38(7), 1329&#8211;1353.</span></div>
-<div class="ref-item"><span class="ref-num">16.</span><span>Shannon, C. E. (1948). A mathematical theory of communication. <em>Bell System Technical Journal</em>, 27(3), 379&#8211;423.</span></div>
-<div class="ref-item"><span class="ref-num">17.</span><span>Tononi, G. (2004). An information integration theory of consciousness. <em>BMC Neuroscience</em>, 5, 42.</span></div>
-<div class="ref-item"><span class="ref-num">18.</span><span>Tononi, G., et al. (2016). Integrated information theory: From consciousness to its physical substrate. <em>Nature Reviews Neuroscience</em>, 17(7), 450&#8211;461.</span></div>
+<div class="ref-item"><span class="ref-num">12.</span><span>Li, X., et al. (2024). Evaluating real-world robot manipulation policies in simulation (SIMPLER). In <em>CoRL</em>.</span></div>
+<div class="ref-item"><span class="ref-num">13.</span><span>Liu, B., et al. (2023). LIBERO: Benchmarking knowledge transfer for lifelong robot learning. <em>NeurIPS Datasets &amp; Benchmarks</em>.</span></div>
+<div class="ref-item"><span class="ref-num">14.</span><span>Mees, O., et al. (2022). CALVIN: A benchmark for language-conditioned policy learning for long-horizon robot manipulation. <em>IEEE RA-L</em>.</span></div>
+<div class="ref-item"><span class="ref-num">15.</span><span>Oizumi, M., Albantakis, L., &amp; Tononi, G. (2014). From the phenomenology to the mechanisms of consciousness: IIT 3.0. <em>PLOS Computational Biology</em>, 10(5).</span></div>
+<div class="ref-item"><span class="ref-num">16.</span><span>Rao, R. P. N., &amp; Ballard, D. H. (1999). Predictive coding in the visual cortex. <em>Nature Neuroscience</em>, 2, 79&#8211;87.</span></div>
+<div class="ref-item"><span class="ref-num">17.</span><span>Seth, A. K. (2014). A predictive processing theory of sensorimotor contingencies. <em>Cognitive Science</em>, 38(7), 1329&#8211;1353.</span></div>
+<div class="ref-item"><span class="ref-num">18.</span><span>Shannon, C. E. (1948). A mathematical theory of communication. <em>Bell System Technical Journal</em>, 27(3), 379&#8211;423.</span></div>
+<div class="ref-item"><span class="ref-num">19.</span><span>Tononi, G. (2004). An information integration theory of consciousness. <em>BMC Neuroscience</em>, 5, 42.</span></div>
+<div class="ref-item"><span class="ref-num">20.</span><span>Tononi, G., et al. (2016). Integrated information theory: From consciousness to its physical substrate. <em>Nature Reviews Neuroscience</em>, 17(7), 450&#8211;461.</span></div>
 </div>
 
 <div class="paper-footer">

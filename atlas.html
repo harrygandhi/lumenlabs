@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATLAS Benchmark — Lumen Labs</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABmElEQVR4nNWXsYrCQBCGjYIiQrpACAjXCTbXpbBNWpvb2sInyFU+Tt7A3pfwDXyENOkDdzP4BXK5nIbEuJ7wgSy78/87O5lsRqP/+MtP744wFiag/52hRVVkJriCJwTCEgLGXOaMHy28EHxhJYRCJGyFD9gyFjLHZ00/IxJgys7WCOyEAyKxYCBm7MCciDW6dtpVfE56NwTVXe2FVDgLmVBAxljKHJ81G2LMu4i/sZOEXR4R+7pDwVzD2ohY7UyQ9iULNaWfwqWFcJ0Law/EWt49DgrOI3UJAbIO4iUZMRJiejcLk8pdc36m486bMmGIqbEXt3bvky6fc+wrXnKsxf6dhfzaQFY43bcsuLYUxNyhMWsyoF0spGjSB4qXpMRWDbcu7lAgEQ7PAxg4EztCy6ka0PPXfq4tVbtan8q/9UTEaAQ/6iC/vtH0OdW+bh58/tU6MGio1uSlDFg/ArtFaP0xfJVGZLcVY8Ley6iSBXuvY0zYu5BUTNi7ktVM2LmUVkzYu5ZXTNj7MGkw8vxPsz/MPP/jdKjfN9N3qN87msOSAAAAAElFTkSuQmCC">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<style>
+[data-theme="dark"] {
+  --bg: #06070a; --fg: #e5e1d8; --accent: #F1B82F; --muted: #6e6b63;
+  --surface: #0e0f13; --card-bg: #0d0e12; --card-border: rgba(255,255,255,0.06);
+  --input-border: rgba(255,255,255,0.08);
+  --dim: #3a3830;
+  --opt-bg: rgba(241,184,47,0.08); --opt-border: rgba(241,184,47,0.25);
+  --learn-bg: rgba(241,184,47,0.04); --learn-border: rgba(241,184,47,0.15);
+  --dizzy-bg: rgba(255,100,100,0.06); --dizzy-border: rgba(255,100,100,0.2);
+  --amb-bg: rgba(255,255,255,0.03); --amb-border: rgba(255,255,255,0.1);
+}
+[data-theme="light"] {
+  --bg: #f4f2ed; --fg: #1a1a1e; --accent: #b8860b; --muted: #6b6860;
+  --surface: #eae7e0; --card-bg: #ffffff; --card-border: rgba(0,0,0,0.08);
+  --input-border: rgba(0,0,0,0.1);
+  --dim: #c5c0b5;
+  --opt-bg: rgba(184,134,11,0.08); --opt-border: rgba(184,134,11,0.25);
+  --learn-bg: rgba(184,134,11,0.04); --learn-border: rgba(184,134,11,0.15);
+  --dizzy-bg: rgba(200,60,60,0.06); --dizzy-border: rgba(200,60,60,0.15);
+  --amb-bg: rgba(0,0,0,0.02); --amb-border: rgba(0,0,0,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.85; font-size: 1.02rem; font-weight: 300;
+  transition: background 0.45s, color 0.45s;
+}
+
+/* Grain */
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+}
+
+/* Layout - offset right so left margin has room for annotations */
+.paper-container {
+  max-width: 680px;
+  margin: 0 auto 0 calc(50% - 180px);
+  padding: 80px 40px 120px 40px;
+  position: relative;
+}
+@media (max-width: 1100px) {
+  .paper-container {
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+  }
+}
+
+/* Back link */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; letter-spacing: 0.04em;
+  margin-bottom: 64px; transition: color 0.3s;
+}
+.back-link:hover { color: var(--accent); }
+.back-link svg { width: 14px; height: 14px; }
+
+/* Title block */
+.paper-tag {
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+}
+.paper-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 400;
+  line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 12px; color: var(--fg);
+}
+.paper-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-style: italic;
+  color: var(--accent); margin-bottom: 32px;
+}
+.paper-meta {
+  font-size: 0.82rem; color: var(--muted); margin-bottom: 48px;
+  padding-bottom: 48px; border-bottom: 1px solid var(--card-border);
+}
+.paper-meta span { color: var(--fg); font-weight: 500; }
+
+/* Section headings */
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 400; color: var(--fg);
+  margin: 72px 0 24px; letter-spacing: -0.01em;
+  padding-top: 32px; border-top: 1px solid var(--card-border);
+}
+h2:first-of-type { border-top: none; padding-top: 0; }
+
+h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.08rem; font-weight: 600; color: var(--fg);
+  margin: 48px 0 16px; letter-spacing: 0.01em;
+}
+
+h4 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem; font-weight: 600; color: var(--accent);
+  margin: 32px 0 12px;
+}
+
+/* Body text */
+p { margin-bottom: 20px; }
+
+strong { font-weight: 600; color: var(--fg); }
+
+em { color: var(--fg); }
+
+/* Lists */
+ul, ol {
+  margin: 0 0 20px 24px;
+}
+li { margin-bottom: 10px; }
+li strong { color: var(--fg); }
+
+/* Equations */
+.equation {
+  margin: 32px 0;
+  padding: 24px 32px;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  text-align: center;
+  overflow-x: auto;
+}
+.equation mjx-container {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+.equation mjx-container svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+.equation.boxed {
+  border-color: rgba(241,184,47,0.2);
+  border-width: 1px;
+  border-left: 3px solid var(--accent);
+}
+.eq-label {
+  display: block; text-align: right;
+  font-size: 0.75rem; color: var(--muted); margin-top: 8px;
+}
+
+/* Margin annotations */
+.margin-ref {
+  color: var(--accent); cursor: pointer;
+  border-bottom: 1px dashed var(--accent);
+  position: relative; display: inline;
+  transition: color 0.2s;
+}
+.margin-ref:hover { color: #fff; }
+
+.margin-popup {
+  display: none; position: fixed;
+  width: 220px; padding: 18px;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 8px; z-index: 10000;
+  font-size: 0.8rem; line-height: 1.6;
+  color: var(--muted);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.margin-popup .popup-title {
+  font-weight: 600; color: var(--fg); font-size: 0.78rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 8px; display: block;
+}
+.margin-popup .popup-link {
+  color: var(--accent); font-size: 0.75rem;
+  text-decoration: none; display: inline-flex;
+  align-items: center; gap: 4px; margin-top: 8px;
+}
+
+
+/* Mobile bottom-sheet popups */
+.popup-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.3);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.popup-overlay.active { display: block; opacity: 1; }
+
+@media (max-width: 768px) {
+  .margin-popup, .def-popup {
+    position: fixed !important;
+    bottom: 0 !important; left: 0 !important; right: 0 !important;
+    top: auto !important;
+    width: 100% !important; max-width: 100% !important;
+    border-radius: 16px 16px 0 0;
+    padding: 28px 24px 36px;
+    transform: translateY(100%);
+    transition: transform 0.35s ease;
+  }
+  .margin-popup.sheet-open, .def-popup.sheet-open {
+    display: block !important;
+    transform: translateY(0);
+  }
+  .margin-popup::before, .def-popup::before {
+    content: ''; display: block;
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--muted); opacity: 0.3;
+    margin: 0 auto 16px;
+  }
+}
+
+
+/* Definition terms */
+.def-term {
+  color: var(--accent); cursor: help;
+  border-bottom: 1px dotted rgba(241,184,47,0.4);
+  position: relative; display: inline;
+}
+.def-term:hover { border-bottom-color: var(--accent); }
+.def-popup {
+  display: none; position: fixed;
+  width: 230px; padding: 18px;
+  background: var(--card-bg); border: 1px solid var(--accent);
+  border-radius: 8px; z-index: 10000;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.def-popup .def-symbol {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; color: var(--accent);
+  margin-bottom: 4px; display: block;
+}
+.def-popup .def-name {
+  font-weight: 600; color: var(--fg); font-size: 0.82rem;
+  margin-bottom: 8px; display: block;
+}
+.def-popup .def-desc {
+  font-size: 0.8rem; color: var(--muted); line-height: 1.55;
+}
+
+
+
+/* Figures */
+.figure-container {
+  margin: 40px 0;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+}
+.figure-container > svg {
+  width: 100%; height: auto; display: block;
+  max-height: 500px;
+}
+.figure-caption mjx-container {
+  display: inline !important;
+  font-size: 1em !important;
+}
+.figure-caption mjx-container svg {
+  width: auto !important;
+  height: 1em !important;
+  display: inline !important;
+  vertical-align: -0.1em;
+}
+mjx-container {
+  overflow-x: auto !important;
+}
+.figure-caption {
+  margin-top: 20px; font-size: 0.82rem; color: var(--muted);
+  line-height: 1.6; border-top: 1px solid var(--card-border);
+  padding-top: 16px;
+}
+.figure-caption strong { color: var(--fg); }
+
+/* Tables */
+.table-container {
+  margin: 32px 0;
+  overflow-x: auto;
+}
+.table-container table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.table-container th {
+  text-align: left; padding: 12px 16px;
+  border-bottom: 2px solid var(--accent);
+  font-weight: 600; color: var(--fg);
+  font-size: 0.82rem; letter-spacing: 0.04em;
+}
+.table-container td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--muted);
+}
+.table-container tr:nth-child(even) td {
+  background: rgba(255,255,255,0.015);
+}
+.table-container td:first-child {
+  color: var(--accent); font-weight: 500;
+  font-family: 'Playfair Display', serif;
+}
+.table-caption {
+  font-size: 0.82rem; color: var(--muted); margin-top: 12px;
+}
+
+/* Quadrant cards */
+.quadrant-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin: 24px 0;
+}
+.quadrant-card {
+  padding: 24px; border-radius: 8px;
+  border: 1px solid;
+}
+.quadrant-card h5 {
+  font-size: 0.92rem; font-weight: 700;
+  margin-bottom: 4px;
+}
+.quadrant-card .q-pi {
+  font-size: 0.82rem; font-style: italic;
+  margin-bottom: 10px; opacity: 0.8;
+}
+.quadrant-card p {
+  font-size: 0.82rem; line-height: 1.55;
+  margin: 0; opacity: 0.85;
+}
+.q-optimal { background: var(--opt-bg); border-color: var(--opt-border); color: #c9a62c; }
+.q-learning { background: var(--learn-bg); border-color: var(--learn-border); color: #a89030; }
+.q-dizzy { background: var(--dizzy-bg); border-color: var(--dizzy-border); color: #cc6666; }
+.q-ambiguous { background: var(--amb-bg); border-color: var(--amb-border); color: #8a8880; }
+
+/* Disambiguation cards */
+.disambig-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; margin: 24px 0;
+}
+.disambig-card {
+  padding: 20px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--card-border);
+  text-align: center;
+}
+.disambig-card h5 {
+  font-size: 0.95rem; font-weight: 700; margin-bottom: 12px;
+}
+.disambig-card .d-row {
+  font-size: 0.82rem; color: var(--muted); margin-bottom: 4px;
+}
+.disambig-card .d-state {
+  font-size: 0.82rem; font-style: italic; margin-top: 12px;
+  padding-top: 12px; border-top: 1px solid var(--card-border);
+}
+
+/* Decision cycle */
+.cycle-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 24px 0;
+}
+.cycle-card {
+  padding: 20px 24px; border-radius: 8px;
+  border: 1px solid var(--card-border);
+}
+.cycle-card h5 {
+  font-size: 0.88rem; font-weight: 700; margin-bottom: 8px;
+}
+.cycle-card p {
+  font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.55;
+}
+.cycle-card .cycle-arrow {
+  font-size: 0.72rem; color: var(--accent); margin-top: 8px;
+  font-weight: 600;
+}
+.c-attend { border-color: rgba(241,184,47,0.2); background: rgba(241,184,47,0.04); }
+.c-predict { border-color: rgba(100,150,255,0.2); background: rgba(100,150,255,0.04); }
+.c-act { border-color: rgba(100,200,130,0.2); background: rgba(100,200,130,0.04); }
+.c-learn { border-color: rgba(255,120,120,0.2); background: rgba(255,120,120,0.04); }
+
+/* Ramanujan levels */
+.ram-levels {
+  margin: 24px 0;
+}
+.ram-level {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border-radius: 8px; margin-bottom: 8px;
+  border: 1px solid var(--card-border);
+}
+.ram-level:nth-child(1) { background: rgba(241,184,47,0.03); }
+.ram-level:nth-child(2) { background: rgba(241,184,47,0.06); }
+.ram-level:nth-child(3) { background: rgba(241,184,47,0.09); }
+.ram-level:nth-child(4) { background: rgba(241,184,47,0.12); }
+.ram-level .ram-title { font-weight: 600; font-size: 0.88rem; color: var(--fg); }
+.ram-level .ram-desc { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+.ram-level .ram-cq { font-weight: 700; color: var(--accent); font-size: 0.88rem; white-space: nowrap; margin-left: 16px; }
+
+/* CQ table special */
+.cq-table td:first-child { font-family: 'Manrope', sans-serif; }
+
+/* Blockquote / callout */
+.callout {
+  margin: 32px 0; padding: 24px 28px;
+  border-left: 3px solid var(--accent);
+  background: rgba(241,184,47,0.04);
+  border-radius: 0 8px 8px 0;
+  font-style: italic; color: var(--muted);
+}
+
+/* Failure mode */
+.failure-mode {
+  margin: 8px 0 20px;
+  padding: 12px 20px;
+  background: rgba(255,100,100,0.04);
+  border-left: 2px solid rgba(255,100,100,0.3);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.9rem; color: var(--muted);
+}
+
+/* References section */
+.ref-list {
+  counter-reset: ref;
+}
+.ref-item {
+  display: flex; gap: 12px;
+  font-size: 0.88rem; color: var(--muted);
+  margin-bottom: 16px; line-height: 1.6;
+}
+.ref-num {
+  flex-shrink: 0; width: 24px;
+  color: var(--accent); font-weight: 600;
+  font-size: 0.82rem;
+}
+.ref-item em { font-style: italic; }
+
+/* Footer */
+.paper-footer {
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid var(--card-border);
+  text-align: left; font-size: 0.82rem; color: var(--muted);
+}
+.paper-footer a {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+.paper-footer a:hover { border-bottom-color: var(--accent); }
+
+/* Scroll smooth */
+html { scroll-behavior: smooth; }
+
+/* Selection color */
+::selection { background: rgba(241,184,47,0.25); color: #fff; }
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed; top: 32px; left: 32px;
+  width: 52px; height: 30px; border-radius: 15px;
+  border: 1px solid var(--card-border); background: var(--surface);
+  cursor: pointer; z-index: 1000; padding: 0;
+  transition: border-color 0.3s, background 0.3s;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+.toggle-knob {
+  display: block; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); margin: 3px;
+  transition: transform 0.3s; font-size: 13px;
+  line-height: 22px; text-align: center;
+}
+[data-theme="dark"] .toggle-knob { transform: translateX(0); }
+[data-theme="light"] .toggle-knob { transform: translateX(22px); }
+
+/* Light mode grain reduction */
+[data-theme="light"] body::after { opacity: 0.5; mix-blend-mode: multiply; }
+
+/* Light mode SVG adjustments */
+[data-theme="light"] .figure-container svg text { transition: fill 0.3s; }
+
+/* Transitions for theme switch */
+.paper-container, .equation, .figure-container, .table-container,
+.disambig-card, .cycle-card, .ram-level, .failure-mode, .callout,
+.margin-popup, .def-popup, .back-link, h2, h3, h4, p, li, td, th {
+  transition: background 0.45s, color 0.45s, border-color 0.45s;
+}
+
+@media (max-width: 768px) {
+  .theme-toggle { top: 20px; left: 20px; }
+}
+
+/* Light mode popup shadows */
+[data-theme="light"] .margin-popup,
+[data-theme="light"] .def-popup {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.1);
+}
+[data-theme="light"] .def-popup {
+  border-color: var(--accent);
+}
+
+/* Light mode figure overrides */
+[data-theme="light"] .figure-container {
+  background: #f0ede6;
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* Figure SVG text - darken for readability */
+[data-theme="light"] .figure-container > svg text[fill="#e5e1d8"] { fill: #1a1a1e; }
+[data-theme="light"] .figure-container > svg text[fill="#6e6b63"] { fill: #4a4840; }
+[data-theme="light"] .figure-container > svg text[fill="#F1B82F"] { fill: #8a6d08; }
+[data-theme="light"] .figure-container > svg text[fill="#cc6666"] { fill: #a03030; }
+[data-theme="light"] .figure-container > svg text[fill="#7cb87c"] { fill: #2a7a2a; }
+[data-theme="light"] .figure-container > svg text[fill="#c9a62c"] { fill: #7a6510; }
+[data-theme="light"] .figure-container > svg text[fill="#8a8880"] { fill: #4a4840; }
+[data-theme="light"] .figure-container > svg text[fill="#8a8040"] { fill: #5a5020; }
+[data-theme="light"] .figure-container > svg text[fill="#8a6060"] { fill: #6a3030; }
+[data-theme="light"] .figure-container > svg text[fill="#6a6860"] { fill: #3a3830; }
+[data-theme="light"] .figure-container > svg text[fill="#a89040"] { fill: #6a5a18; }
+
+/* SVG lines and strokes */
+[data-theme="light"] .figure-container > svg line[stroke="#e5e1d8"] { stroke: #1a1a1e; }
+[data-theme="light"] .figure-container > svg line[stroke="#6e6b63"] { stroke: #4a4840; }
+[data-theme="light"] .figure-container > svg line[stroke="#F1B82F"] { stroke: #8a6d08; }
+[data-theme="light"] .figure-container > svg line[stroke="#cc6666"] { stroke: #a03030; }
+[data-theme="light"] .figure-container > svg line[stroke="#7cb87c"] { stroke: #2a7a2a; }
+
+/* SVG rects */
+[data-theme="light"] .figure-container > svg rect[fill="#0e0f13"] { fill: #f0ede6; }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(255,255,255,0.05)"] { fill: rgba(0,0,0,0.04); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.08)"] { fill: rgba(184,134,11,0.08); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(241,184,47,0.12)"] { fill: rgba(184,134,11,0.1); }
+[data-theme="light"] .figure-container > svg rect[fill="rgba(100,200,130,0.08)"] { fill: rgba(30,120,30,0.08); }
+[data-theme="light"] .figure-container > svg rect[stroke="#6e6b63"] { stroke: #4a4840; }
+[data-theme="light"] .figure-container > svg rect[stroke="#F1B82F"] { stroke: #8a6d08; }
+[data-theme="light"] .figure-container > svg rect[stroke="rgba(241,184,47,0.3)"] { stroke: rgba(138,109,8,0.3); }
+[data-theme="light"] .figure-container > svg rect[stroke="rgba(100,200,130,0.3)"] { stroke: rgba(30,120,30,0.3); }
+
+/* SVG arrow markers */
+[data-theme="light"] .figure-container > svg marker path[fill="#e5e1d8"] { fill: #1a1a1e; }
+[data-theme="light"] .figure-container > svg marker path[fill="#F1B82F"] { fill: #8a6d08; }
+[data-theme="light"] .figure-container > svg marker path[fill="#6e6b63"] { fill: #4a4840; }
+[data-theme="light"] .figure-container > svg marker path[fill="#cc6666"] { fill: #a03030; }
+[data-theme="light"] .figure-container > svg marker path[fill="#7cb87c"] { fill: #2a7a2a; }
+
+/* SVG circles */
+[data-theme="light"] .figure-container > svg circle[fill="#F1B82F"] { fill: #8a6d08; }
+[data-theme="light"] .figure-container > svg circle[fill="#2C5282"] { fill: #2C5282; }
+
+/* SVG paths */
+[data-theme="light"] .figure-container > svg path[stroke="#F1B82F"] { stroke: #8a6d08; }
+[data-theme="light"] .figure-container > svg path[stroke="#6e6b63"] { stroke: #4a4840; }
+[data-theme="light"] .figure-container > svg path[stroke="#cc6666"] { stroke: #a03030; }
+
+/* Quadrant card colors in light mode */
+[data-theme="light"] .q-optimal { background: rgba(184,134,11,0.08); border-color: rgba(184,134,11,0.2); color: #6a5010; }
+[data-theme="light"] .q-learning { background: rgba(184,134,11,0.05); border-color: rgba(184,134,11,0.15); color: #6a5010; }
+[data-theme="light"] .q-dizzy { background: rgba(180,50,50,0.05); border-color: rgba(180,50,50,0.15); color: #8a2020; }
+[data-theme="light"] .q-ambiguous { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); color: #4a4840; }
+
+/* Disambig cards */
+[data-theme="light"] .disambig-card { background: #f0ede6; border-color: rgba(0,0,0,0.08); }
+
+/* Cycle cards */
+[data-theme="light"] .c-attend { border-color: rgba(184,134,11,0.2); background: rgba(184,134,11,0.05); }
+[data-theme="light"] .c-predict { border-color: rgba(60,90,180,0.2); background: rgba(60,90,180,0.05); }
+[data-theme="light"] .c-act { border-color: rgba(40,140,70,0.2); background: rgba(40,140,70,0.05); }
+[data-theme="light"] .c-learn { border-color: rgba(180,60,60,0.2); background: rgba(180,60,60,0.05); }
+
+/* Ram levels */
+[data-theme="light"] .ram-level { border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .ram-level:nth-child(1) { background: rgba(184,134,11,0.04); }
+[data-theme="light"] .ram-level:nth-child(2) { background: rgba(184,134,11,0.07); }
+[data-theme="light"] .ram-level:nth-child(3) { background: rgba(184,134,11,0.10); }
+[data-theme="light"] .ram-level:nth-child(4) { background: rgba(184,134,11,0.13); }
+
+/* Failure mode */
+[data-theme="light"] .failure-mode { background: rgba(180,50,50,0.04); border-left-color: rgba(180,50,50,0.25); }
+
+/* Callout */
+[data-theme="light"] .callout { background: rgba(184,134,11,0.06); border-left-color: var(--accent); }
+
+/* Equation blocks */
+[data-theme="light"] .equation { background: #ebe8e0; border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .equation.boxed { border-left-color: var(--accent); }
+
+/* Papers sidebar */
+.papers-sidebar {
+  position: fixed;
+  right: 32px;
+  top: 80px;
+  width: 150px;
+  z-index: 100;
+}
+.papers-sidebar .sidebar-home {
+  display: block;
+  font-size: 0.75rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; letter-spacing: 0.03em;
+  margin-bottom: 200px; padding: 0; transition: color 0.2s;
+}
+.papers-sidebar .sidebar-home:hover { color: var(--accent); border-left-color: transparent; }
+.papers-sidebar h4 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 16px 0;
+  padding: 0;
+  border: none;
+}
+.papers-sidebar a {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 0 6px 12px;
+  border-left: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.papers-sidebar a:hover { color: var(--accent); }
+.papers-sidebar a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+@media (max-width: 1300px) {
+  .papers-sidebar { display: none; }
+}
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "vooonq2mdo");
+</script>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+  <span class="toggle-knob" id="toggleKnob"></span>
+</button>
+
+<nav class="papers-sidebar">
+  <a href="/" class="sidebar-home">Back to home page</a>
+  <h4>Papers</h4>
+  <a href="paper">Cognitive Parsimony Theory<span style="display:block;font-size:0.65rem;opacity:0.6;margin-top:2px;">February, 2026</span></a>
+  <a href="atlas" class="active">ATLAS Benchmark<span style="display:block;font-size:0.65rem;opacity:0.6;margin-top:2px;">March, 2026</span></a>
+</nav>
+
+<div class="paper-container">
+
+<h1 class="paper-title">ATLAS</h1>
+<div class="paper-subtitle">Volume I: Navigation and Exploration</div>
+<div class="paper-meta">
+  written by <span>Harry Gandhi</span> &nbsp;|&nbsp; March 2026<br>
+  Created with the assistance of Claude (Anthropic)
+</div>
+
+<!-- ═══ ABSTRACT ═══ -->
+<h2>Abstract</h2>
+
+<p>Existing benchmarks for embodied AI are designed around task execution&#8202;&#8212;&#8202;picking up objects, following instructions, reaching goals&#8202;&#8212;&#8202;and assume systems that have already been trained on demonstrations. They measure performance on held-out tasks, not the process of learning itself. This paper introduces <strong>ATLAS</strong> (Autonomous Testing for Learning, Attention, and Survival), a benchmark suite designed for a fundamentally different class of systems: embodied agents that learn about the world from scratch, in real time, without demonstrations. This first volume focuses on <strong>navigation and exploration</strong>&#8202;&#8212;&#8202;the foundational capabilities that any mobile embodied system must develop before it can perform higher-level tasks such as object manipulation.</p>
+
+<p>ATLAS evaluates five capabilities that no existing benchmark measures: <em>exploration efficiency</em> (how much of the world the system discovers per unit of action), <em>world model convergence</em> (how fast prediction accuracy stabilizes), <em>adaptive attention</em> (whether the system learns to attend to the right sensor channels and re-attends after change), <em>sensor degradation resilience</em> (behavioral robustness when sensors fail), and <em>memory efficiency</em> (whether stored experiences are useful and whether forgetting preserves the right ones).</p>
+
+<p>The suite is organized in two tiers: Tier&#8202;1 benchmarks are purely behavioral and require no internal access to the system under test; Tier&#8202;2 benchmarks require the system to expose three standardized signals (prediction error, attention vector, memory retrieval indicator) that any learning system implicitly computes. All benchmarks are specified over physical environments reproducible by any lab with standard equipment.</p>
+
+<p>ATLAS provides the first standardized evaluation framework for autonomous embodied learning, filling a critical gap between task-execution benchmarks (<span class="margin-ref">LIBERO<span class="margin-popup"><span class="popup-title">LIBERO</span>Liu et al. (2023). 130 language-conditioned manipulation tasks for benchmarking lifelong robot learning. Measures task execution, not learning process.</span></span>, CALVIN) and theoretical consciousness metrics (Integrated Information Theory, the Free Energy Principle).</p>
+
+<p><strong>Keywords:</strong> embodied intelligence, benchmark, autonomous learning, exploration, attention, sensor resilience, world models, memory, evaluation framework</p>
+
+<!-- ═══ SECTION 1: INTRODUCTION ═══ -->
+<h2>1. Introduction</h2>
+
+<p>The past three years have produced remarkable advances in embodied AI. Vision-Language-Action models (VLAs) like RT-2 (Brohan et al., 2023), OpenVLA (Kim et al., 2024), and $\pi_0$ (Physical Intelligence, 2024) combine internet-scale pre-training with robotic control to achieve impressive performance on manipulation and navigation tasks. The benchmarks that evaluate these systems&#8202;&#8212;&#8202;LIBERO (Liu et al., 2023), CALVIN (Mees et al., 2022), SIMPLER (Li et al., 2024), VLABench (Zhang et al., 2025), and others&#8202;&#8212;&#8202;have become the standard currency of the field, with success rates and task completion scores serving as the primary measures of progress.</p>
+
+<p>Yet these benchmarks share a fundamental assumption: the system has been trained before evaluation begins. LIBERO provides demonstration data. CALVIN provides training environments. VLAs are fine-tuned on thousands of teleoperated trajectories. The benchmarks measure the <em>output</em> of learning&#8202;&#8212;&#8202;task execution&#8202;&#8212;&#8202;not the <em>process</em> of learning itself.</p>
+
+<p>This paper addresses a different class of embodied systems: those that learn about the world from scratch, in real time, starting from zero knowledge. These include active inference agents operating under the <span class="margin-ref">Free Energy Principle<span class="margin-popup"><span class="popup-title">Free Energy Principle</span>Karl Friston&#8217;s framework proposing that living systems minimize prediction error. ATLAS builds on this by evaluating the learning capabilities it predicts.</span></span> (Friston et al., 2017), curiosity-driven reinforcement learning systems (Pathak et al., 2017; Burda et al., 2019), world-model-based agents (<span class="margin-ref">Dreamer<span class="margin-popup"><span class="popup-title">Dreamer</span>Hafner et al. (2025). World-model-based RL agent that learns environment dynamics from pixel observations and plans in latent space.</span></span> (Hafner et al., 2025), JEPA (LeCun, 2022)), and other architectures designed for autonomous exploration and adaptation. These systems face a fundamental evaluation problem: there are no standardized benchmarks for measuring how well an embodied agent <em>learns</em>, as distinct from how well it <em>performs pre-learned tasks</em>.</p>
+
+<p>We introduce ATLAS (Autonomous Testing for Learning, Attention, and Survival), a suite of five benchmarks designed to fill this gap. ATLAS evaluates capabilities that are essential for autonomous embodied intelligence but are not measured by any existing benchmark:</p>
+
+<ul>
+<li><strong>Exploration efficiency.</strong> Does the system actively seek informative experience, or does it wander randomly? Exploration is the foundation of all autonomous learning&#8202;&#8212;&#8202;a system that cannot efficiently discover its environment cannot learn about it.</li>
+<li><strong>World model convergence.</strong> How quickly does the system build an accurate predictive model of its environment? Sample efficiency in world-model building determines how fast an agent becomes functional after deployment.</li>
+<li><strong>Adaptive attention.</strong> Does the system learn which sensor channels carry the most information, and does it re-learn when conditions change? Attention allocation across modalities is a core cognitive capability that existing benchmarks do not evaluate because most systems use fixed architectures that fuse all inputs uniformly.</li>
+<li><strong>Sensor degradation resilience.</strong> When a sensor fails or becomes unreliable, does the system detect the degradation and compensate, or does it collapse? This is a safety-critical capability for real-world deployment that is entirely absent from current benchmarks.</li>
+<li><strong>Memory efficiency.</strong> Does the system retain useful experiences and discard irrelevant ones? Memory management under finite capacity determines whether an agent can sustain learning over long deployments.</li>
+</ul>
+
+<p>ATLAS is organized in two tiers. <strong>Tier&#8202;1</strong> benchmarks are purely behavioral: they require no internal access to the System Under Test (SUT) and can be applied to any embodied agent, including black-box systems. <strong>Tier&#8202;2</strong> benchmarks require the system to expose three standardized internal signals&#8202;&#8212;&#8202;prediction error, attention vector, and memory retrieval indicator&#8202;&#8212;&#8202;enabling deeper mechanistic evaluation. All benchmarks are specified over physical environments that any laboratory can reproduce with standard equipment.</p>
+
+<p>We position ATLAS not as a replacement for task-execution benchmarks, but as a complementary evaluation layer. LIBERO asks: <em>can the robot do the task?</em> ATLAS asks: <em>can the robot learn the task&#8217;s world from scratch?</em> Both are necessary for a complete picture of embodied intelligence.</p>
+
+<p>This paper presents Volume&#8202;I of the ATLAS suite, focused on <strong>navigation and exploration</strong>. Navigation is the natural starting point for evaluating autonomous embodied learning because it is prerequisite to everything else: a system must first learn to perceive its environment, avoid obstacles, allocate attention across sensors, and build a spatial world model before it can manipulate objects, follow complex instructions, or collaborate with humans. The five benchmarks in this volume&#8202;&#8212;&#8202;Exploration Efficiency, World Model Convergence, Adaptive Attention, Sensor Degradation Resilience, and Memory Efficiency&#8202;&#8212;&#8202;are all grounded in the navigation setting, using mobile robots operating in indoor environments. Volume&#8202;II, planned as future work, will extend the ATLAS framework to manipulation learning: evaluating whether embodied systems can discover object affordances, learn grasping strategies, and develop tool use from scratch.</p>
+
+<!-- ═══ SECTION 2: RELATED WORK ═══ -->
+<h2>2. Related Work</h2>
+
+<h3>2.1 Task-Execution Benchmarks</h3>
+
+<p>The dominant paradigm in embodied AI evaluation is task execution. LIBERO (Liu et al., 2023) provides 130 language-conditioned manipulation tasks organized into suites that test transfer across object types, spatial arrangements, and goals. CALVIN (Mees et al., 2022) evaluates language-conditioned manipulation across multiple environment setups. SIMPLER (Li et al., 2024) bridges simulation and reality with environments that correlate strongly with real-world performance. VLABench (Zhang et al., 2025) extends evaluation to semantic reasoning and long-horizon planning. These benchmarks are essential for the VLA paradigm, but they share a structural limitation: they presuppose that learning has already occurred.</p>
+
+<p>For navigation, R2R (Anderson et al., 2018) and its continuous-environment successor VLN-CE (Krantz et al., 2020) evaluate instruction-following in photorealistic indoor environments, using metrics including Success Rate (SR), Success weighted by Path Length (SPL), Navigation Error (NE), and normalized Dynamic Time Warping (nDTW). NaVILA (Cheng et al., 2025) extends these to legged robots with a physics-realistic Isaac Sim benchmark. These benchmarks also assume pre-training on demonstration trajectories.</p>
+
+<h3>2.2 Exploration and Curiosity Metrics</h3>
+
+<p>Intrinsic motivation and curiosity have been studied extensively in reinforcement learning. Count-based exploration (Bellemare et al., 2016), prediction-error curiosity (Pathak et al., 2017), and Random Network Distillation (Burda et al., 2019) all drive exploration through internal signals. However, these methods are typically evaluated on downstream task performance (Atari scores, MuJoCo rewards) rather than on the quality of exploration itself. There is no standardized benchmark that directly measures exploration efficiency as a first-class metric.</p>
+
+<h3>2.3 Consciousness and Awareness Evaluation</h3>
+
+<p>The question of evaluating machine consciousness has attracted growing attention. Butlin et al. (2023) derive indicators from neuroscientific theories of consciousness and propose using them to assess AI systems. Evers et al. (2026) outline desiderata for evaluating awareness in artificial systems: any framework should be domain-sensitive, scale-neutral, multidimensional, and ability-oriented. ATLAS shares these desiderata but focuses on operationally measurable capabilities rather than theoretical consciousness indicators.</p>
+
+<h3>2.4 Active Inference and Free Energy Benchmarks</h3>
+
+<p>The active inference community, building on Friston&#8217;s free energy principle (Friston et al., 2017), has produced frameworks for embodied agents that minimize surprise through perception and action. Recent work like EASE (Chen et al., 2025) demonstrates emergent behaviors&#8202;&#8212;&#8202;implicit memory, target tracking, adaptive control&#8202;&#8212;&#8202;from free energy minimization alone. However, there is no standardized evaluation suite for comparing active inference agents against other embodied learning systems. ATLAS provides this.</p>
+
+<h3>2.5 Lifelong and Continual Learning</h3>
+
+<p>LIBERO was originally designed as a lifelong learning benchmark, measuring forward transfer and catastrophic forgetting. In practice, virtually all published results use the full training dataset without continual learning. The lifelong learning dimension remains largely untested. ATLAS&#8217;s Memory Efficiency benchmark (Section 4.5) directly addresses this gap.</p>
+
+<!-- ═══ SECTION 3: FRAMEWORK DESIGN ═══ -->
+<h2>3. The ATLAS Framework</h2>
+
+<h3>3.1 Design Principles</h3>
+
+<p>ATLAS is governed by five design principles:</p>
+
+<ul>
+<li><strong>Architecture agnosticism.</strong> The benchmarks test capabilities, not implementations. Any system that can be embodied in a mobile platform with sensors&#8202;&#8212;&#8202;whether it uses linear models, neural networks, active inference, reinforcement learning, or hybrid architectures&#8202;&#8212;&#8202;can be evaluated.</li>
+<li><strong>Zero-shot evaluation.</strong> The SUT receives no prior training data, no demonstrations, and no reward functions from the benchmark. Learning occurs entirely during the evaluation itself.</li>
+<li><strong>Physical reproducibility.</strong> Reference environments are specified in terms of physical room layouts, obstacle types, and sensor configurations that any laboratory can recreate with standard equipment.</li>
+<li><strong>Graduated access.</strong> The two-tier structure ensures that any system can participate in at least some benchmarks (Tier&#8202;1) while enabling deeper evaluation for systems that expose internal signals (Tier&#8202;2).</li>
+<li><strong>Ablation-friendly.</strong> Every benchmark is designed to be informative when comparing a system against ablated versions of itself (e.g., with curiosity disabled, with memory removed, with attention fixed).</li>
+</ul>
+
+<h3>3.2 The Two-Tier Structure</h3>
+
+<p><strong>Tier&#8202;1: Behavioral Benchmarks</strong> require no internal access to the system under test. Evaluation is based entirely on observable behavior: where the robot moves, how it responds to environmental changes, and whether it avoids collisions. Any embodied system can be evaluated at Tier&#8202;1, including proprietary black-box systems.</p>
+
+<p><strong>Tier&#8202;2: Mechanistic Benchmarks</strong> require the system to expose three standardized signals at each decision cycle via a simple publish-subscribe interface (Table 1).</p>
+
+<div class="table-container">
+<table>
+<tr><th>Signal</th><th>Type</th><th>Description</th><th>Rationale</th></tr>
+<tr><td><code>prediction_error</code></td><td>Scalar $\geq 0$</td><td>The system&#8217;s total prediction error, however internally computed.</td><td>Any learning system with a world model computes this.</td></tr>
+<tr><td><code>attention_vector</code></td><td>Vector of length $N$</td><td>A weight per sensor channel indicating processing resource or salience allocation.</td><td>Any multi-modal system has some form of attention allocation.</td></tr>
+<tr><td><code>memory_retrieval</code></td><td>Boolean</td><td>True if the current prediction was informed by retrieved past experience.</td><td>Any system with memory knows when it retrieves.</td></tr>
+</table>
+<div class="table-caption"><strong>Table 1:</strong> The Tier&#8202;2 signal interface. Systems expose these three signals at each decision cycle.</div>
+</div>
+
+<p>These signals are not architecture-specific. An active inference agent exposes variational free energy (<code>prediction_error</code>), precision weights (<code>attention_vector</code>), and posterior updates from episodic memory (<code>memory_retrieval</code>). A Dreamer agent exposes reconstruction loss, encoder attention maps, and replay buffer sampling. A curiosity-driven RL agent exposes intrinsic reward magnitude, feature importance weights, and experience replay flags. The interface asks the system to externalize signals it already computes internally.</p>
+
+<h3>3.3 Benchmark Summary</h3>
+
+<div class="table-container">
+<table>
+<tr><th>#</th><th>Benchmark</th><th>Tier</th><th>Capability Tested</th><th>Primary Metric</th></tr>
+<tr><td>1</td><td>Exploration Efficiency</td><td>1</td><td>Active information seeking; environmental coverage</td><td>EEI (states/meter)</td></tr>
+<tr><td>2</td><td>World Model Convergence</td><td>1+2</td><td>Prediction learning speed; sample efficiency</td><td>T2C (seconds)</td></tr>
+<tr><td>3</td><td>Adaptive Attention</td><td>2</td><td>Learned attention allocation; re-adaptation</td><td>Attention Accuracy ($\rho$)</td></tr>
+<tr><td>4</td><td>Sensor Degradation</td><td>1</td><td>Graceful degradation under sensor failure</td><td>Resilience Ratio</td></tr>
+<tr><td>5</td><td>Memory Efficiency</td><td>2</td><td>Useful retention; effective forgetting</td><td>Memory Utility Score</td></tr>
+</table>
+<div class="table-caption"><strong>Table 2:</strong> The five ATLAS benchmarks.</div>
+</div>
+
+<h3>3.4 Reference Environments</h3>
+
+<p>ATLAS specifies three standardized physical environments of increasing complexity (Table 3). These are defined by their functional properties rather than by specific furniture, allowing any lab to construct reasonable approximations.</p>
+
+<div class="table-container">
+<table>
+<tr><th>Env</th><th>Dimensions</th><th>Contents</th><th>Visual Characteristics</th></tr>
+<tr><td>A (Simple)</td><td>$\geq 3\text{m} \times 3\text{m}$</td><td>4 walls, 2 static obstacles, uniform floor</td><td>Single overhead light. Minimal texture variation.</td></tr>
+<tr><td>B (Moderate)</td><td>$\geq 3\text{m} \times 4\text{m}$</td><td>4&#8211;6 obstacles of varying size, 1 dynamic element (fan, clock, or moving toy)</td><td>Mixed lighting. 2&#8211;3 distinct visual textures.</td></tr>
+<tr><td>C (Complex)</td><td>$\geq 4\text{m} \times 5\text{m}$ or 2 rooms</td><td>6+ obstacles, doorway, varied flooring, periodic human presence</td><td>Multiple light sources. 3+ distinct visual zones.</td></tr>
+</table>
+<div class="table-caption"><strong>Table 3:</strong> ATLAS reference environments. All must be photographed and measured before testing.</div>
+</div>
+
+<p>Future versions of ATLAS will specify simulation equivalents in standard robotics simulators (Gazebo, Isaac Sim, ManiSkill) to enable large-scale automated evaluation.</p>
+
+<!-- Figure 1: Environment Layouts - SVG -->
+<div class="figure-container">
+<svg viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-blue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#2C5282"/></marker>
+  </defs>
+
+  <!-- Environment A (Simple) -->
+  <rect x="10" y="30" width="200" height="160" rx="2" fill="none" stroke="#6e6b63" stroke-width="1.5"/>
+  <rect x="50" y="65" width="25" height="22" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <text x="62" y="80" fill="#6e6b63" font-size="7" font-family="Manrope" text-anchor="middle">obs</text>
+  <rect x="135" y="120" width="30" height="20" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <text x="150" y="134" fill="#6e6b63" font-size="7" font-family="Manrope" text-anchor="middle">obs</text>
+  <!-- Robot -->
+  <circle cx="110" cy="110" r="6" fill="#2C5282"/>
+  <line x1="110" y1="110" x2="110" y2="96" stroke="#2C5282" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <!-- Light -->
+  <circle cx="110" cy="35" r="4" fill="#F1B82F" opacity="0.6"/>
+  <text x="110" y="16" fill="#e5e1d8" font-size="11" font-family="Manrope" text-anchor="middle" font-weight="600">Env A (Simple)</text>
+  <text x="110" y="206" fill="#6e6b63" font-size="9" font-family="Manrope" text-anchor="middle">&#8805;3m &#215; 3m</text>
+
+  <!-- Environment B (Moderate) -->
+  <rect x="250" y="30" width="240" height="160" rx="2" fill="none" stroke="#6e6b63" stroke-width="1.5"/>
+  <!-- Two texture zones -->
+  <rect x="251" y="31" width="119" height="158" fill="rgba(241,184,47,0.03)"/>
+  <line x1="370" y1="30" x2="370" y2="190" stroke="#6e6b63" stroke-width="0.5" stroke-dasharray="4,3"/>
+  <text x="372" y="115" fill="#6e6b63" font-size="7" font-family="Manrope" transform="rotate(-90,372,115)" text-anchor="middle">texture</text>
+  <!-- Obstacles -->
+  <rect x="280" y="55" width="22" height="18" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="420" y="60" width="18" height="30" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="290" y="140" width="25" height="18" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="440" y="130" width="28" height="18" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="350" y="80" width="18" height="22" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <!-- Dynamic element (fan) -->
+  <circle cx="460" cy="45" r="10" fill="none" stroke="#cc6666" stroke-width="1.2"/>
+  <path d="M456,45 L464,45 M460,41 L460,49" stroke="#cc6666" stroke-width="1"/>
+  <text x="460" y="60" fill="#cc6666" font-size="7" font-family="Manrope" text-anchor="middle">fan</text>
+  <!-- Robot -->
+  <circle cx="370" cy="110" r="6" fill="#2C5282"/>
+  <line x1="370" y1="110" x2="370" y2="96" stroke="#2C5282" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <!-- Lights -->
+  <circle cx="330" cy="35" r="4" fill="#F1B82F" opacity="0.6"/>
+  <circle cx="450" cy="35" r="3" fill="#F1B82F" opacity="0.4"/>
+  <text x="370" y="16" fill="#e5e1d8" font-size="11" font-family="Manrope" text-anchor="middle" font-weight="600">Env B (Moderate)</text>
+  <text x="370" y="206" fill="#6e6b63" font-size="9" font-family="Manrope" text-anchor="middle">&#8805;3m &#215; 4m</text>
+
+  <!-- Environment C (Complex) -->
+  <rect x="530" y="30" width="240" height="160" rx="2" fill="none" stroke="#6e6b63" stroke-width="1.5"/>
+  <!-- Two rooms -->
+  <rect x="531" y="31" width="114" height="158" fill="rgba(241,184,47,0.02)"/>
+  <rect x="646" y="31" width="123" height="158" fill="rgba(100,150,255,0.02)"/>
+  <!-- Dividing wall with doorway -->
+  <line x1="645" y1="30" x2="645" y2="85" stroke="#6e6b63" stroke-width="1.5"/>
+  <line x1="645" y1="130" x2="645" y2="190" stroke="#6e6b63" stroke-width="1.5"/>
+  <text x="645" y="112" fill="#6e6b63" font-size="7" font-family="Manrope" text-anchor="middle">door</text>
+  <!-- Room 1 obstacles -->
+  <rect x="550" y="50" width="22" height="16" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="600" y="140" width="25" height="22" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="555" y="105" width="18" height="25" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <!-- Room 2 obstacles -->
+  <rect x="665" y="50" width="25" height="22" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="720" y="120" width="25" height="25" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="680" y="90" width="18" height="18" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <rect x="660" y="155" width="22" height="16" rx="2" fill="rgba(255,255,255,0.08)" stroke="#6e6b63" stroke-width="0.8"/>
+  <!-- Human path -->
+  <path d="M565,180 L565,120 L630,108 L660,108 L710,80" stroke="#cc6666" stroke-width="1.2" stroke-dasharray="4,3" fill="none"/>
+  <text x="555" y="185" fill="#cc6666" font-size="7" font-family="Manrope">human</text>
+  <!-- Robot -->
+  <circle cx="590" cy="95" r="6" fill="#2C5282"/>
+  <line x1="590" y1="95" x2="590" y2="81" stroke="#2C5282" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <!-- Lights -->
+  <circle cx="590" cy="35" r="4" fill="#F1B82F" opacity="0.6"/>
+  <circle cx="700" cy="35" r="4" fill="#F1B82F" opacity="0.6"/>
+  <circle cx="745" cy="35" r="3" fill="#F1B82F" opacity="0.4"/>
+  <!-- Zone labels -->
+  <text x="590" y="178" fill="#6e6b63" font-size="7" font-family="Manrope" text-anchor="middle">Zone 1</text>
+  <text x="710" y="178" fill="#6e6b63" font-size="7" font-family="Manrope" text-anchor="middle">Zone 2</text>
+  <text x="650" y="16" fill="#e5e1d8" font-size="11" font-family="Manrope" text-anchor="middle" font-weight="600">Env C (Complex)</text>
+  <text x="650" y="206" fill="#6e6b63" font-size="9" font-family="Manrope" text-anchor="middle">&#8805;4m &#215; 5m or 2 rooms</text>
+</svg>
+<div class="figure-caption"><strong>Figure 1: Schematic layouts of the three ATLAS reference environments.</strong> Blue circles indicate the robot starting position. Gray rectangles represent obstacles (0.2&#8211;0.5&#8202;m per side, placed to create navigation challenges). Environment&#8202;B includes a dynamic element (red) and two distinct floor textures. Environment&#8202;C features two connected rooms with a doorway passage and a periodic human path (dashed red). Exact obstacle positions may vary across labs; the functional requirements (obstacle count, visual diversity, room connectivity) are what matter for reproducibility.</div>
+</div>
+
+<h3>3.5 Measurement Units: Time, Distance, and Cycles</h3>
+
+<p>Embodied systems operate at widely varying decision frequencies. A wheeled robot may run its perception-action loop at 5&#8202;Hz while a drone controller operates at 200&#8202;Hz. Using raw action cycles as the unit of measurement would make cross-platform comparison meaningless: 3,000 cycles at 5&#8202;Hz represents 10 minutes of experience, while 3,000 cycles at 200&#8202;Hz represents 15 seconds.</p>
+
+<p>ATLAS addresses this by selecting the most appropriate physical unit for each benchmark:</p>
+
+<ul>
+<li><strong>Distance-normalized metrics</strong> are used where the quality of physical interaction matters. The Exploration Efficiency Index reports states discovered per meter traveled, ensuring that a robot covering 10 meters and discovering 15 visual states is scored equally regardless of how many decision cycles or seconds it took.</li>
+<li><strong>Time-normalized metrics</strong> are used where practical deployment speed matters. World Model Convergence reports seconds to convergence, because the operationally relevant question is how long a user must wait after deploying a robot before it becomes competent.</li>
+<li><strong>Duration-defined protocols</strong> specify each experimental phase in wall-clock time (e.g., &#8220;3 minutes of autonomous movement&#8221;) rather than cycle counts. The SUT executes as many decision cycles as its architecture permits within that duration.</li>
+</ul>
+
+<p>All SUTs must operate at a minimum decision frequency of 2&#8202;Hz to ensure meaningful real-time interaction with the environment. Systems must also report their actual decision frequency alongside all results. For single-platform comparisons (e.g., full system vs. ablation on the same robot), cycle-based metrics remain valid and may be reported as supplementary data.</p>
+
+<p><strong>A note on Tier&#8202;2 signal comparability.</strong> Absolute values of <code>prediction_error</code> depend on the system&#8217;s internal architecture&#8202;&#8212;&#8202;a pixel-prediction model and a latent-dynamics model will produce error values on different scales. Tier&#8202;2 metrics are therefore meaningful only for within-system comparisons (e.g., full system vs. ablation, or the same system across environments), not for comparing absolute values across different architectures. Cross-architecture comparison should rely on Tier&#8202;1 behavioral metrics and on normalized quantities such as ratios and rank correlations.</p>
+
+<!-- ═══ SECTION 4: BENCHMARKS ═══ -->
+<h2>4. Benchmarks</h2>
+
+<h3>4.1 Exploration Efficiency Index (EEI)</h3>
+
+<p><em>Tier:</em> 1 (behavioral, no internal access required)</p>
+
+<h4>Motivation</h4>
+
+<p>Exploration is the foundation of autonomous learning. A system that cannot efficiently discover its environment cannot learn about it. Yet exploration quality is almost never evaluated directly&#8202;&#8212;&#8202;it is typically measured indirectly through downstream task performance. EEI measures exploration as a first-class capability.</p>
+
+<h4>Metric Definition</h4>
+
+<p>The primary metric is the <span class="def-term">Exploration Efficiency Index<span class="def-popup"><span class="def-symbol">EEI</span><span class="def-name">Exploration Efficiency Index</span><span class="def-desc">Ratio of distinct visual states discovered to total distance traveled in meters. Measures how efficiently a system explores its environment.</span></span></span>, defined as the number of distinct visual states discovered per meter of distance traveled:</p>
+
+<div class="equation boxed">$$\text{EEI} = \frac{V_{\text{discovered}}}{D_{\text{traveled}}}$$<span class="eq-label">(1)</span></div>
+
+<p>where $V_{\text{discovered}}$ is the number of distinct visual states visited and $D_{\text{traveled}}$ is the total distance covered in meters (computed from odometry or integrated velocity commands). Distance normalization ensures fair comparison across platforms with different movement speeds&#8202;&#8212;&#8202;a fast robot and a slow robot that both discover 15 states per 10 meters of travel receive the same score. A <em>visual state</em> is defined as a cluster centroid in the space of visual representations:</p>
+
+<ol>
+<li>Extract a visual representation from each frame captured during the run using a pre-trained visual encoder that produces fixed-dimensional embeddings. The choice of encoder is left to the researcher and must be reported alongside results. To ensure comparability across studies using different encoders, we recommend that authors also report Spatial Dispersion (SD), which is encoder-independent.</li>
+<li>After the run, cluster all embeddings using $k$-means with $k$ selected by silhouette score ($k \in [5, 50]$), or use a fixed $k = 20$ for comparability.</li>
+<li>$V_{\text{discovered}}$ is the number of clusters containing at least one embedding from the run.</li>
+</ol>
+
+<h4>Sub-Metrics</h4>
+
+<p><strong>Time to $N$% Coverage ($T_N$).</strong> The wall-clock time in seconds until the SUT has visited $N$% of all discoverable clusters. Discoverable clusters are established by running a random walk baseline for the same duration and taking the union of its clusters with the SUT&#8217;s. Report $T_{50}$, $T_{75}$, and $T_{90}$.</p>
+
+<p><strong>Revisit Ratio (RR).</strong> The fraction of distance traveled within visual state clusters that have already been visited more than 5 times. Lower is better. A system stuck in a loop has RR approaching 1.0.</p>
+
+<p><strong>Spatial Dispersion (SD).</strong> Compute the convex hull area of all positions visited. $\text{SD} = \text{hull area} / \text{environment area}$. This metric requires odometry and is encoder-independent, making it the most robust cross-study comparison point.</p>
+
+<h4>Protocol</h4>
+
+<p>The EEI is evaluated in Environments&#8202;B and&#8202;C. Environment&#8202;A is excluded because its minimal visual variation (only 2 obstacles, uniform texture) provides too few discoverable states for meaningful differentiation between exploration strategies. Environment&#8202;B tests exploration in a moderately complex, controlled setting. Environment&#8202;C adds multi-room connectivity and human presence, testing whether the system&#8217;s exploration strategy scales to more challenging conditions.</p>
+
+<p>For each environment:</p>
+
+<ol>
+<li>Place the SUT at the designated starting position (center of the room, facing the longest wall). In Environment&#8202;C, start in Zone&#8202;1.</li>
+<li>Initialize with fresh state (no prior training, default parameters).</li>
+<li>Run autonomously for 10 minutes. Do not intervene. Record odometry throughout.</li>
+<li>Record the visual stream (one frame per decision cycle) and cumulative distance traveled.</li>
+<li>Repeat with the random walk baseline (uniform random actions with collision avoidance) for the same 10-minute duration.</li>
+<li>Compute EEI, $T_N$, RR, and SD for both conditions.</li>
+</ol>
+
+<p>Report EEI scores for each environment separately. The ratio between Environment&#8202;C and&#8202;B scores characterizes how well the exploration strategy scales with environmental complexity.</p>
+
+<h4>Baselines and Interpretation</h4>
+
+<p>The random walk is the universal lower bound. Any learning system should exceed it; the degree of improvement quantifies the value of the system&#8217;s exploration strategy. An EEI ratio (SUT / random walk) above 1.5 indicates meaningfully superior exploration. Additional baselines may include: the same system with exploration mechanisms disabled (ablation), count-based curiosity, or $\varepsilon$-greedy exploration.</p>
+
+<!-- ═══ SECTION 5: WORLD MODEL CONVERGENCE ═══ -->
+<h3>4.2 World Model Convergence (WMC)</h3>
+
+<p><em>Tier:</em> 1 (behavioral) + Tier&#8202;2 (mechanistic, with <code>prediction_error</code> signal)</p>
+
+<h4>Motivation</h4>
+
+<p>An embodied learning system&#8217;s primary job is to build an accurate model of its environment. The speed at which this model converges determines how quickly the agent becomes functional. This is the embodied equivalent of sample efficiency in reinforcement learning (RL), measured on prediction quality rather than task reward.</p>
+
+<h4>Metric Definition</h4>
+
+<p><strong>Tier&#8202;1 (Behavioral): Collision Rate Convergence (CRC).</strong> A system with an accurate world model should collide less over time as it learns spatial relationships. CRC is measured as the wall-clock time (in seconds) until the rolling collision rate drops below a threshold and stays below for at least 30 consecutive seconds. The collision rate is computed as collisions per minute, using a 60-second rolling window. The threshold is 1.0 collision per minute, or the minimum observed rate $\times 1.5$, whichever is higher. Critically, only periods of active movement count: intervals where the SUT&#8217;s velocity is below a minimum threshold (0.01&#8202;m/s) are excluded from the collision rate calculation. This prevents a system from achieving a low collision rate by simply freezing or moving imperceptibly slowly.</p>
+
+<p><strong>Tier&#8202;2 (Mechanistic): <span class="def-term">Time to Convergence<span class="def-popup"><span class="def-symbol">T2C</span><span class="def-name">Time to Convergence</span><span class="def-desc">The wall-clock time in seconds until prediction error stabilizes within 20% of its final value. Lower means faster learning.</span></span></span> (T2C).</strong> T2C is defined as the wall-clock time in seconds from the start of the run until the rolling average of <code>prediction_error</code> (30-second window) stays within 20% of its final value (mean of last 60 seconds) for at least 30 consecutive seconds. Lower is better. If the system fails to converge within the run duration, T2C is recorded as non-convergent.</p>
+
+<h4>Sub-Metrics</h4>
+
+<p><strong>Final Prediction Floor (FPF).</strong> The mean <code>prediction_error</code> over the last 60 seconds. Report T2C and FPF jointly. A system that converges fast to a high floor is worse than one that converges slowly to a low floor. (Tier&#8202;2. Within-system comparison only&#8202;&#8212;&#8202;absolute FPF values are not comparable across architectures.)</p>
+
+<p><strong>Re-Convergence Ratio (RCR).</strong> After convergence, introduce a perturbation (rearrange one obstacle by at least 0.5&#8202;m). Measure time to re-converge using the same T2C definition. $\text{RCR} = \text{T2C}_{\text{re}} / \text{T2C}_{\text{initial}}$. A ratio below 1.0 indicates the system learned transferable environmental structure rather than memorizing specific sensor patterns.</p>
+
+<p><strong>Generalization Test (GT).</strong> After the model converges, stop the SUT and relocate it to a position in the environment it has not previously visited (at least 1.5&#8202;m from any previously occupied position, verified via odometry). Resume the run for 60 seconds. Measure mean <code>prediction_error</code> over this period and compare to the Cold Start control&#8217;s mean <code>prediction_error</code> over its first 60 seconds at the same location. If the converged model&#8217;s error is lower than the cold start&#8217;s, the system has learned generalizable structure; if it is equal or higher, the model was overfitting to locally visited regions. Report the Generalization Ratio: $\text{GR} = \overline{F}_{\text{cold}} / \overline{F}_{\text{relocated}}$; values above 1.0 indicate positive generalization. (Tier&#8202;2.)</p>
+
+<p><strong>Per-Channel Convergence.</strong> If per-channel prediction error is available, report T2C separately for each sensor modality. This reveals whether some modalities are learned faster than others. (Tier&#8202;2.)</p>
+
+<h4>Protocol</h4>
+
+<p>Run the SUT in each reference environment (A, B, C) for 20 minutes each, starting from fresh state. Record <code>prediction_error</code> at each decision cycle (Tier&#8202;2) and/or collisions via IMU or external observation (Tier&#8202;1). After convergence, apply one perturbation (move a single obstacle at least 0.5&#8202;m) and continue for 5 additional minutes to measure re-convergence. Then apply the Generalization Test by relocating the SUT to an unvisited position.</p>
+
+<!-- ═══ SECTION 6: ADAPTIVE ATTENTION GAUNTLET ═══ -->
+<h3>4.3 Adaptive Attention Gauntlet (AAG)</h3>
+
+<p><em>Tier:</em> 2 (requires <code>attention_vector</code> signal)</p>
+
+<h4>Motivation</h4>
+
+<p>Any system processing multiple sensor modalities must allocate processing resources across them. A camera in a dark room provides no useful information; a LiDAR in an open field provides little variation. The optimal allocation changes with context. This benchmark tests whether a system <em>learns</em> the right allocation and <em>re-learns</em> when conditions change.</p>
+
+<h4>Metric Definition</h4>
+
+<p><strong><span class="def-term">Attention Accuracy<span class="def-popup"><span class="def-symbol">AA</span><span class="def-name">Attention Accuracy</span><span class="def-desc">Spearman rank correlation between ground-truth sensor informativeness and the system&#8217;s learned attention allocation. Ranges from &#8722;1 (wrong) to +1 (perfect).</span></span></span> (AA).</strong> Before the test, a panel of evaluators defines the ground-truth informativeness ranking of sensor channels for each phase. AA is the Spearman rank correlation ($\rho$) between the ground-truth ranking and the <code>attention_vector</code> ranking, computed over the last 30 seconds of each phase and averaged across all phases:</p>
+
+<div class="equation boxed">$$\text{AA} = \frac{1}{P} \sum_{p=1}^{P} \rho\!\left(\text{ranking}_{\text{gt},p},\; \text{ranking}_{\text{attn},p}\right)$$<span class="eq-label">(2)</span></div>
+
+<p>AA ranges from $-1.0$ (systematically wrong) through $0.0$ (random) to $+1.0$ (perfect).</p>
+
+<h4>Protocol: The Gauntlet</h4>
+
+<p>The SUT begins with fresh state in Environment&#8202;B and runs continuously through all phases without restart. Each phase changes a single environmental variable. Phase durations are specified in wall-clock time; the SUT executes as many decision cycles as its architecture permits within each phase.</p>
+
+<div class="table-container">
+<table>
+<tr><th>Phase</th><th>Duration</th><th>Condition</th><th>Ground-Truth: Top Channels</th></tr>
+<tr><td>1</td><td>3 min (moving)</td><td>Normal exploration in furnished room</td><td>Visual channels (scene changes with movement)</td></tr>
+<tr><td>2</td><td>90 sec (stationary)</td><td>Stop the SUT in place</td><td>Internal/metacognitive channels only</td></tr>
+<tr><td>3</td><td>3 min (moving)</td><td>Turn off all lights</td><td>Non-visual spatial channels (LiDAR, depth)</td></tr>
+<tr><td>4</td><td>90 sec (moving)</td><td>Lights on; obstacle in path</td><td>Spatial channels + visual recovery</td></tr>
+<tr><td>5</td><td>3 min (moving)</td><td>Occlude primary camera</td><td>Non-visual channels dominate</td></tr>
+</table>
+<div class="table-caption"><strong>Table 4:</strong> The Attention Gauntlet protocol.</div>
+</div>
+
+<h4>Sub-Metrics</h4>
+
+<p><strong>Re-Adaptation Speed (RAS).</strong> Wall-clock seconds after a phase transition before $\rho > 0.5$ is sustained for at least 10 consecutive seconds. Lower is better.</p>
+
+<p><strong>Attention Entropy (AE).</strong> Shannon entropy of the normalized <code>attention_vector</code>. High entropy = uniform (no specialization); low entropy = concentrated. Report mean AE per phase.</p>
+
+<!-- ═══ SECTION 7: SENSOR DEGRADATION RESILIENCE ═══ -->
+<h3>4.4 Sensor Degradation Resilience (SDR)</h3>
+
+<p><em>Tier:</em> 1 (behavioral, no internal access required)</p>
+
+<h4>Motivation</h4>
+
+<p>Real-world robots have sensors that fail. A robust system should detect degradation and compensate by relying on functioning sensors. This is a safety-critical capability entirely absent from current benchmarks.</p>
+
+<h4>Metric Definition</h4>
+
+<div class="equation boxed">$$\text{Resilience Ratio} = \frac{\text{Performance}_{\text{degraded}}}{\text{Performance}_{\text{healthy}}}$$<span class="eq-label">(3)</span></div>
+
+<p>where Performance is a composite measured over a 90-second window of active movement:</p>
+
+<div class="equation">$$\text{Performance} = \frac{\text{ActionDiversity} + \text{CollisionAvoidance} + \text{Mobility}}{3}$$<span class="eq-label">(4)</span></div>
+
+<ul>
+<li><strong>Action Diversity:</strong> fraction of discrete action bins visited (normalized to $[0,1]$).</li>
+<li><strong>Collision Avoidance Rate:</strong> $1 - (\text{collisions} / \text{minutes of active movement})$, normalized to $[0,1]$.</li>
+<li><strong>Mobility:</strong> fraction of the measurement window spent with non-zero velocity.</li>
+</ul>
+
+<p>A <span class="def-term">Resilience Ratio<span class="def-popup"><span class="def-symbol">RR</span><span class="def-name">Resilience Ratio</span><span class="def-desc">Ratio of degraded performance to healthy performance. 1.0 means no impact from sensor failure; 0.0 means total collapse.</span></span></span> of 1.0 means zero behavioral impact. A ratio of 0.0 means total collapse.</p>
+
+<h4>Protocol</h4>
+
+<ol>
+<li>Run the SUT for 7 minutes to establish baseline $\text{Performance}_{\text{healthy}}$.</li>
+<li>Apply each degradation for 3 minutes, followed by a 90-second recovery period with the sensor restored:</li>
+</ol>
+
+<div class="table-container">
+<table>
+<tr><th>Degradation</th><th>Method</th><th>What It Tests</th></tr>
+<tr><td>D1: Camera occlusion</td><td>Cover primary camera with opaque material</td><td>Navigation using non-visual sensors</td></tr>
+<tr><td>D2: Range obstruction</td><td>Cover or obstruct primary range sensor</td><td>Obstacle avoidance with alt. sensing</td></tr>
+<tr><td>D3: Proprioceptive noise</td><td>Physical vibration/tapping to corrupt IMU</td><td>Distinguishing real motion from noise</td></tr>
+<tr><td>D4: Communication failure</td><td>Disconnect offboard processing link for 60s</td><td>Safe behavior during partial failure</td></tr>
+</table>
+<div class="table-caption"><strong>Table 5:</strong> Sensor degradation types.</div>
+</div>
+
+<h4>Recovery Metric</h4>
+
+<p><strong>Recovery Time (RT).</strong> Wall-clock seconds after sensor restoration until Performance returns to within 90% of baseline. Fast recovery demonstrates temporary adaptation, not permanent model corruption.</p>
+
+<!-- ═══ SECTION 8: MEMORY EFFICIENCY ═══ -->
+<h3>4.5 Memory Efficiency (Loop Test)</h3>
+
+<p><em>Tier:</em> 2 (requires <code>memory_retrieval</code> signal)</p>
+
+<h4>Motivation</h4>
+
+<p>An embodied system operating over long timescales must decide what to remember and what to forget. The Loop Test directly measures whether stored experiences from a first visit to an environment help during a second visit.</p>
+
+<h4>Protocol: The Loop</h4>
+
+<p>Prepare two visually distinct zones (Zone&#8202;A and Zone&#8202;B) separated by at least 2 meters.</p>
+
+<ol>
+<li><strong>Phase&#8202;1 (First Visit):</strong> Fresh state. Zone&#8202;A for 7 minutes.</li>
+<li><strong>Phase&#8202;2 (Displacement):</strong> Stop. Move SUT to Zone&#8202;B. Resume for 7 minutes.</li>
+<li><strong>Phase&#8202;3 (Return):</strong> Stop. Move SUT back to Zone&#8202;A (same position as Phase&#8202;1). Resume for 7 minutes.</li>
+<li><strong>Control:</strong> Fresh-state SUT in Zone&#8202;A for 7 minutes (Cold Start baseline).</li>
+</ol>
+
+<h4>Metric Definition</h4>
+
+<p><strong><span class="def-term">Memory Utility Score<span class="def-popup"><span class="def-symbol">MUS</span><span class="def-name">Memory Utility Score</span><span class="def-desc">Product of memory retrieval rate and retrieval quality. Measures whether stored experiences actually help on return visits.</span></span></span> (MUS):</strong></p>
+
+<div class="equation boxed">$$\text{MUS} = R_{\text{rate}} \times R_{\text{quality}}$$<span class="eq-label">(5)</span></div>
+
+<p>where $R_{\text{rate}}$ is the fraction of the first 90 seconds of Phase&#8202;3 where <code>memory_retrieval</code> $= \text{True}$, and $R_{\text{quality}}$ is the fraction of those retrieval moments where <code>prediction_error</code> at the next decision step is lower than the Cold Start control&#8217;s mean at the equivalent elapsed time.</p>
+
+<h4>Sub-Metrics</h4>
+
+<p><strong>Forward Transfer Ratio (FTR).</strong> $\text{FTR} = \text{AUC}_{\text{cold}} / \text{AUC}_{\text{return}}$ over the first 3 minutes of Phase&#8202;3 vs. the first 3 minutes of the Cold Start control, where AUC is computed over the <code>prediction_error</code> time series. $\text{FTR} > 1.0$ indicates positive transfer.</p>
+
+<p><strong>Negative Transfer Check.</strong> $\text{FTR} < 1.0$ flags a memory system that harms performance on return.</p>
+
+<p><strong>Pruning Quality (PQ).</strong> If the memory buffer reaches capacity during Phase&#8202;2, MUS in Phase&#8202;3 tests whether pruning preserved high-value Phase&#8202;1 memories.</p>
+
+<!-- ═══ SECTION 5: BEYOND THE BENCHMARKS ═══ -->
+<h2>5. Beyond the Benchmarks</h2>
+
+<h3>5.1 What ATLAS Does and Does Not Measure</h3>
+
+<p>ATLAS measures <em>learning capabilities</em>&#8202;&#8212;&#8202;the ability to explore, model, attend, withstand, and remember. It does not measure task execution, instruction following, or manipulation skill. A system that scores perfectly on ATLAS might still be unable to pick up a mug. Conversely, a system that scores perfectly on LIBERO might fail every ATLAS benchmark if it cannot learn without demonstrations. The two evaluation paradigms are complementary.</p>
+
+<h3>5.2 Applicability Across Architectures</h3>
+
+<p>ATLAS is designed to be useful for a broad range of embodied learning architectures:</p>
+
+<ul>
+<li><strong>Active inference agents</strong> (free energy principle): <code>prediction_error</code> = variational free energy; <code>attention_vector</code> = precision weights; <code>memory_retrieval</code> = posterior update from episodic model.</li>
+<li><strong>World-model-based RL</strong> (Dreamer, RSSM): <code>prediction_error</code> = reconstruction loss; <code>attention_vector</code> = gradient-based attribution per modality; <code>memory_retrieval</code> = experience replay flag.</li>
+<li><strong>Curiosity-driven RL</strong> (ICM, RND): <code>prediction_error</code> = intrinsic reward signal; <code>attention_vector</code> = per-modality curiosity; <code>memory_retrieval</code> = prioritized replay sampling.</li>
+<li><strong>VLAs in continual learning:</strong> If adapted for online learning, VLAs can participate in Tier&#8202;1 immediately and Tier&#8202;2 if they expose loss and attention signals.</li>
+<li><strong>Biological systems:</strong> Tier&#8202;1 benchmarks could in principle be applied to animal behavior studies (e.g., rodent exploration in novel mazes).</li>
+</ul>
+
+<h3>5.3 Limitations</h3>
+
+<p><strong>Ground-truth subjectivity in Benchmark&#8202;3.</strong> The Attention Gauntlet requires evaluators to define informativeness rankings. While the phases are designed to make the correct ranking obvious, there is room for disagreement. We recommend at least two independent evaluators.</p>
+
+<p><strong>Physical reproducibility.</strong> Environments will vary across labs. We recommend focusing on relative comparisons (system vs. ablation) rather than absolute values. Simulation equivalents are planned for future versions.</p>
+
+<p><strong>Decision frequency dependence.</strong> While ATLAS specifies protocols in wall-clock time and physical distance to enable cross-platform comparison, the number of learning updates a system performs within a given duration still depends on its decision frequency. Systems must report their actual decision frequency alongside results, and a minimum frequency of 2&#8202;Hz is required.</p>
+
+<p><strong>Manipulation-capable systems.</strong> The current suite focuses on mobile navigation and exploration. Future extensions should add manipulation learning benchmarks.</p>
+
+<h3>5.4 Relationship to Consciousness Evaluation</h3>
+
+<p>ATLAS does not claim to measure consciousness. It evaluates operationally defined capabilities that are <em>prerequisites</em> for any theory of machine consciousness but are not sufficient for it. A system that cannot explore, learn, attend, or remember is unlikely to be conscious by any theory. ATLAS provides the empirical foundation on which consciousness evaluations can be built.</p>
+
+<h3>5.5 Future Directions</h3>
+
+<p><strong>Simulation environments.</strong> The most significant limitation of physical-only evaluation is reproducibility: every lab&#8217;s Environment&#8202;B will differ in exact obstacle placement, lighting conditions, and visual texture. Standardized simulation equivalents in Gazebo, Isaac Sim, and ManiSkill would enable automated, deterministic evaluation at scale. The challenge is ensuring that simulation-based scores correlate with physical-world scores&#8202;&#8212;&#8202;a problem that the SIMPLER benchmark (Li et al., 2024) has shown is solvable through careful visual matching and system identification. We envision a future version of ATLAS that specifies both physical and simulated environments, with paired validation studies establishing the correlation between them. This would allow rapid iteration in simulation while retaining the physical environments as ground-truth validation.</p>
+
+<p><strong>Multi-agent benchmarks.</strong> When multiple autonomous learning systems share an environment, their interactions create a fundamentally different learning problem. One agent&#8217;s actions become another&#8217;s sensory input, creating coupled dynamics that neither agent individually controls. Key questions include whether mutual prediction pressure produces cooperative or competitive behavior, whether inter-agent communication emerges from shared optimization objectives, and whether collective exploration is more efficient than independent exploration. A multi-agent extension of ATLAS would place two or more SUTs in the same environment and measure whether joint EEI exceeds the sum of individual EEIs, whether the presence of another learning agent accelerates or impedes world model convergence, and whether attention systems learn to track the other agent as a distinct entity.</p>
+
+<p><strong>Manipulation learning.</strong> The current ATLAS suite focuses on mobile navigation and exploration because these capabilities are prerequisite to manipulation: a system must first learn to perceive and move through its environment before it can learn to interact with objects. However, extending ATLAS to manipulation-capable platforms (robot arms, mobile manipulators) would enable evaluation of object interaction learning from scratch&#8202;&#8212;&#8202;for example, whether a system can discover that pushing an object changes its position, or that grasping requires specific approach angles, without being told. This would bridge the gap between ATLAS (learning evaluation) and LIBERO (manipulation evaluation).</p>
+
+<p><strong>Cross-embodiment transfer.</strong> Can a world model learned on one robot body transfer to another? If a wheeled robot and a legged robot both learn in the same environment, do their world models share transferable structure (physics of obstacles, visual correlations) despite having different action spaces and sensor configurations? This question is increasingly relevant as the robotics community pursues general-purpose foundation models. An ATLAS cross-embodiment extension would run the Memory Efficiency Loop Test across two different robot platforms: learn in Zone&#8202;A on Robot&#8202;1, then test recall on Robot&#8202;2 in the same Zone&#8202;A. Positive transfer would indicate that the learned world model captures environment structure independent of embodiment.</p>
+
+<p><strong>Longitudinal evaluation.</strong> ATLAS currently measures single-session learning over minutes to hours. Real-world deployment requires learning that persists and compounds over days, weeks, and months. A longitudinal version of ATLAS would track key metrics (EEI, T2C, AA, MUS) across multiple sessions with persistent memory, testing whether the system improves indefinitely, plateaus at a stable competency, or degrades over time due to catastrophic forgetting or model drift. This is the most ambitious extension and requires solving the persistent memory problem&#8202;&#8212;&#8202;saving and restoring learned state across sessions&#8202;&#8212;&#8202;which remains an open engineering challenge for most embodied learning architectures.</p>
+
+<!-- ═══ SECTION 6: CONCLUSION ═══ -->
+<h2>6. Conclusion</h2>
+
+<p>We have introduced ATLAS, a benchmark suite for evaluating embodied systems that learn about the world from scratch. Its five benchmarks&#8202;&#8212;&#8202;Exploration Efficiency, World Model Convergence, Adaptive Attention, Sensor Degradation Resilience, and Memory Efficiency&#8202;&#8212;&#8202;test capabilities that are fundamental to autonomous embodied intelligence but absent from existing evaluation frameworks.</p>
+
+<p>ATLAS fills a specific gap: the space between task-execution benchmarks (which assume prior training) and theoretical consciousness metrics (which lack operational definitions). By providing standardized, reproducible protocols with clearly defined metrics, ATLAS enables direct comparison across architectural paradigms&#8202;&#8212;&#8202;active inference, curiosity-driven RL, world-model-based agents, and beyond&#8202;&#8212;&#8202;on capabilities that matter for real-world autonomous deployment.</p>
+
+<!-- ═══ REFERENCES ═══ -->
+<h2>References</h2>
+
+<div class="ref-list">
+<div class="ref-item"><span class="ref-num">1.</span><span>Anderson, P., Wu, Q., Teney, D., Bruce, J., Johnson, M., S&#252;nderhauf, N., Reid, I., Gould, S., &amp; van den Hengel, A. (2018). Vision-and-language navigation: Interpreting visually-grounded navigation instructions in real environments. In <em>CVPR</em>.</span></div>
+<div class="ref-item"><span class="ref-num">2.</span><span>Bellemare, M. G., Srinivasan, S., Ostrovski, G., Schaul, T., Saxton, D., &amp; Munos, R. (2016). Unifying count-based exploration and intrinsic motivation. In <em>NeurIPS</em>.</span></div>
+<div class="ref-item"><span class="ref-num">3.</span><span>Brohan, A. et al. (2023). RT-2: Vision-language-action models transfer web knowledge to robotic control. In <em>CoRL</em>.</span></div>
+<div class="ref-item"><span class="ref-num">4.</span><span>Burda, Y., Edwards, H., Storkey, A., &amp; Klimov, O. (2019). Exploration by random network distillation. In <em>ICLR</em>.</span></div>
+<div class="ref-item"><span class="ref-num">5.</span><span>Butlin, P. et al. (2023). Consciousness in artificial intelligence: Insights from the science of consciousness. <em>arXiv:2308.08708</em>.</span></div>
+<div class="ref-item"><span class="ref-num">6.</span><span>Chen, Z., Kundu, S., Baweja, H. S., &amp; Aakur, S. N. (2025). EASE: Embodied active event perception via self-supervised energy minimization. <em>arXiv:2506.17516</em>.</span></div>
+<div class="ref-item"><span class="ref-num">7.</span><span>Cheng, A.-C., Ji, Y., Yang, Z., Zou, X., Kautz, J., B&#305;y&#305;k, E., Yin, H., Liu, S., &amp; Wang, X. (2025). NaVILA: Legged robot vision-language-action model for navigation. In <em>RSS</em>.</span></div>
+<div class="ref-item"><span class="ref-num">8.</span><span>Evers, K. et al. (2026). Just aware enough: Desiderata for evaluating awareness in artificial systems. <em>arXiv:2601.14901</em>.</span></div>
+<div class="ref-item"><span class="ref-num">9.</span><span>Friston, K. et al. (2017). Active inference, curiosity, and insight. <em>Neural Computation</em>, 29(10), 2633&#8211;2683.</span></div>
+<div class="ref-item"><span class="ref-num">10.</span><span>Hafner, D., Pasukonis, J., Ba, J., &amp; Lillicrap, T. (2025). Mastering diverse control tasks through world models. <em>Nature</em>, 640, 647&#8211;653.</span></div>
+<div class="ref-item"><span class="ref-num">11.</span><span>Kim, M. J. et al. (2024). OpenVLA: An open-source vision-language-action model. <em>arXiv:2406.09246</em>.</span></div>
+<div class="ref-item"><span class="ref-num">12.</span><span>Krantz, J., Wijmans, E., Majumdar, A., Batra, D., &amp; Lee, S. (2020). Beyond the nav-graph: Vision-and-language navigation in continuous environments. In <em>ECCV</em>.</span></div>
+<div class="ref-item"><span class="ref-num">13.</span><span>LeCun, Y. (2022). A path towards autonomous machine intelligence. <em>OpenReview (preprint)</em>.</span></div>
+<div class="ref-item"><span class="ref-num">14.</span><span>Li, X. et al. (2024). Evaluating real-world robot manipulation policies in simulation (SIMPLER). In <em>CoRL</em>.</span></div>
+<div class="ref-item"><span class="ref-num">15.</span><span>Liu, B., Zhu, Y., Gao, C., Feng, Y., Liu, Q., Zhu, Y., &amp; Stone, P. (2023). LIBERO: Benchmarking knowledge transfer for lifelong robot learning. In <em>NeurIPS Datasets &amp; Benchmarks</em>.</span></div>
+<div class="ref-item"><span class="ref-num">16.</span><span>Mees, O., Hermann, L., Rosete-Beas, E., &amp; Burgard, W. (2022). CALVIN: A benchmark for language-conditioned policy learning for long-horizon robot manipulation. <em>IEEE RA-L</em>.</span></div>
+<div class="ref-item"><span class="ref-num">17.</span><span>Pathak, D., Agrawal, P., Efros, A. A., &amp; Darrell, T. (2017). Curiosity-driven exploration by self-supervised prediction. In <em>ICML</em>.</span></div>
+<div class="ref-item"><span class="ref-num">18.</span><span>Physical Intelligence. (2024). $\pi_0$: A vision-language-action flow model for general robot control. <em>arXiv:2410.24164</em>.</span></div>
+<div class="ref-item"><span class="ref-num">19.</span><span>Zhang, W. et al. (2025). VLABench: A large-scale benchmark for language-conditioned robotics manipulation. In <em>ICCV</em>.</span></div>
+</div>
+
+<div class="paper-footer">
+  <p><a href="/">Lumen Labs</a> &nbsp;&#183;&nbsp; March 2026</p>
+</div>
+
+</div>
+
+<script>
+(function() {
+  // Theme toggle
+  var htmlEl = document.documentElement;
+  var toggleBtn = document.getElementById('themeToggle');
+  var toggleKnob = document.getElementById('toggleKnob');
+
+  function applyTheme(theme) {
+    htmlEl.setAttribute('data-theme', theme);
+    toggleKnob.textContent = theme === 'dark' ? '\u263D' : '\u2600';
+  }
+
+  toggleBtn.addEventListener('click', function() {
+    var current = htmlEl.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  applyTheme('dark');
+
+  // Popup system — desktop: hover in margin; mobile: bottom sheet on tap
+  var allRefs = document.querySelectorAll('.margin-ref, .def-term');
+  var isMobile = function() { return window.innerWidth <= 768; };
+
+  // Overlay for mobile bottom sheets
+  var overlay = document.createElement('div');
+  overlay.className = 'popup-overlay';
+  document.body.appendChild(overlay);
+
+  var activeSheet = null;
+
+  function closeSheet() {
+    if (activeSheet) {
+      activeSheet.classList.remove('sheet-open');
+      overlay.classList.remove('active');
+      // After transition, hide it
+      var closing = activeSheet;
+      setTimeout(function() {
+        if (!closing.classList.contains('sheet-open')) {
+          closing.style.display = 'none';
+        }
+      }, 350);
+      activeSheet = null;
+    }
+  }
+
+  overlay.addEventListener('click', closeSheet);
+
+  allRefs.forEach(function(el) {
+    var popup = el.querySelector('.margin-popup, .def-popup');
+    if (!popup) return;
+
+    // Mobile: tap to open bottom sheet
+    el.addEventListener('click', function(e) {
+      if (!isMobile()) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (activeSheet === popup) {
+        closeSheet();
+        return;
+      }
+      closeSheet();
+
+      popup.style.display = 'block';
+      overlay.classList.add('active');
+      // Force reflow so transition fires
+      popup.offsetHeight;
+      popup.classList.add('sheet-open');
+      activeSheet = popup;
+    });
+
+    // Desktop: hover positioning
+    el.addEventListener('mouseenter', function(e) {
+      if (isMobile()) return;
+      var rect = el.getBoundingClientRect();
+      var container = document.querySelector('.paper-container');
+      var containerRect = container.getBoundingClientRect();
+
+      var leftSpace = containerRect.left;
+
+      if (leftSpace > 280) {
+        popup.style.left = (containerRect.left - 260) + 'px';
+      } else {
+        popup.style.left = rect.left + 'px';
+      }
+
+      var top = rect.top - 8;
+      if (top + 300 > window.innerHeight) {
+        top = window.innerHeight - 320;
+      }
+      if (top < 10) top = 10;
+      popup.style.top = top + 'px';
+
+      popup.style.display = 'block';
+    });
+
+    el.addEventListener('mouseleave', function(e) {
+      if (isMobile()) return;
+      setTimeout(function() {
+        if (!el.matches(':hover') && !popup.matches(':hover')) {
+          popup.style.display = 'none';
+        }
+      }, 800);
+    });
+
+    if (popup) {
+      popup.addEventListener('mouseleave', function() {
+        if (isMobile()) return;
+        popup.style.display = 'none';
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>
+</html>
